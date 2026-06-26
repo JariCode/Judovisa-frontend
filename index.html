@@ -1,11 +1,91 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fi">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Judovisa kirjautuminen</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Judovisa · Kirjautuminen</title>
+  <!-- Esiyhdistä Google-fontteihin nopeampaa latausta varten -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <!-- Dojo-teeman fontit: Shippori Mincho otsikoihin, Zen Kaku leipätekstiin, Noto Sans JP japaniin -->
+  <link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;600;800&family=Noto+Sans+JP:wght@300;400;500&family=Zen+Kaku+Gothic+New:wght@300;400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-    
+
+  <!-- Taustadekoraatiot: iso kanji ja pehmeät väriympyrät -->
+  <div class="bg-layer">
+    <div class="bg-kanji" aria-hidden="true">柔</div>
+    <div class="bg-circle c1"></div>
+    <div class="bg-circle c2"></div>
+  </div>
+
+  <!-- Kirjautumis- ja rekisteröintinäkymä keskitettynä -->
+  <main class="auth-wrap">
+    <div class="auth-container">
+
+      <!-- Logo: kanji ja teksti -->
+      <div class="auth-logo">
+        <div class="logo-kanji">柔</div>
+        <div class="logo-text">
+          <span class="logo-main">JUDOVISA</span>
+          <span class="logo-sub">道場 · DOJO</span>
+        </div>
+      </div>
+
+      <!-- Välilehdet: vaihto kirjautumisen ja rekisteröinnin välillä -->
+      <div class="auth-tabs">
+        <button class="tab-btn active" data-tab="login" type="button">Kirjaudu</button>
+        <button class="tab-btn" data-tab="register" type="button">Rekisteröidy</button>
+      </div>
+
+      <!-- Kirjautumislomake -->
+      <form id="form-login" class="auth-form active" novalidate>
+        <!-- Käyttäjätunnuskenttä -->
+        <div class="field-group">
+          <label for="login-username">Käyttäjätunnus</label>
+          <input type="text" id="login-username" autocomplete="username" placeholder="käyttäjätunnus" required>
+        </div>
+        <!-- Salasanakenttä näytä/piilota-painikkeella -->
+        <div class="field-group">
+          <label for="login-password">Salasana</label>
+          <div class="pw-wrap">
+            <input type="password" id="login-password" autocomplete="current-password" placeholder="••••••••" required>
+            <button type="button" class="pw-toggle" data-target="login-password" aria-label="Näytä tai piilota salasana">👁</button>
+          </div>
+        </div>
+        <!-- Viestialue virheille ja onnistumisille -->
+        <div class="auth-message" id="login-message"></div>
+        <!-- Lähetyspainike -->
+        <button type="submit" class="btn-primary">Kirjaudu sisään</button>
+      </form>
+
+      <!-- Rekisteröintilomake -->
+      <form id="form-register" class="auth-form" novalidate>
+        <!-- Käyttäjätunnuskenttä -->
+        <div class="field-group">
+          <label for="reg-username">Käyttäjätunnus</label>
+          <input type="text" id="reg-username" autocomplete="username" placeholder="3-20 merkkiä" required>
+        </div>
+        <!-- Salasanakenttä näytä/piilota-painikkeella -->
+        <div class="field-group">
+          <label for="reg-password">Salasana <span class="hint">(vähintään 8 merkkiä)</span></label>
+          <div class="pw-wrap">
+            <input type="password" id="reg-password" autocomplete="new-password" placeholder="••••••••" required>
+            <button type="button" class="pw-toggle" data-target="reg-password" aria-label="Näytä tai piilota salasana">👁</button>
+          </div>
+        </div>
+        <!-- Viestialue virheille ja onnistumisille -->
+        <div class="auth-message" id="register-message"></div>
+        <!-- Lähetyspainike -->
+        <button type="submit" class="btn-primary">Luo tili</button>
+      </form>
+
+    </div>
+  </main>
+
+  <!-- Skriptit: ensin api-apuri, sitten lomakelogiikka -->
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
 </body>
 </html>

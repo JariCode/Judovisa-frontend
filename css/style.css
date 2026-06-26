@@ -1,0 +1,315 @@
+/* ============================================================
+   JUDOVISA - TYYLIT
+   Dojo-teema: tumma tausta, lacquer-punainen, kulta
+   Fontit: Shippori Mincho (otsikot), Zen Kaku (leipä), Noto Sans JP (japani)
+   ============================================================ */
+
+/* ---- CSS-muuttujat: värit, fontit, varjot ---- */
+:root {
+  /* Värit */
+  --ink:        #1a1208;  /* tumma tausta */
+  --parchment:  #f5f0e8;  /* vaalea teksti */
+  --red:        #c0392b;  /* pääpunainen */
+  --red-deep:   #922b21;  /* tumma punainen */
+  --red-glow:   rgba(192, 57, 43, 0.18); /* punainen hehku */
+  --gold:       #b8920a;  /* kulta */
+  --white:      #fdfaf5;  /* lähes valkoinen */
+  --muted:      #8a7e6e;  /* haalea teksti */
+  --correct:    #2e7d46;  /* oikein-vihreä */
+  --wrong:      #c0392b;  /* väärin-punainen */
+
+  /* Fontit */
+  --font-display: 'Shippori Mincho', serif;
+  --font-body:    'Zen Kaku Gothic New', sans-serif;
+  --font-jp:      'Noto Sans JP', sans-serif;
+
+  /* Reunapyöristys ja varjot */
+  --radius:    12px;
+  --radius-lg: 20px;
+  --shadow-lg: 0 12px 48px rgba(26, 18, 8, 0.22);
+
+  /* Siirtymä */
+  --transition: 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ---- Reset: nollaa marginaalit ja aseta box-sizing ---- */
+*, *::before, *::after {
+  box-sizing: border-box; /* padding ja border mukaan leveyteen */
+  margin: 0;
+  padding: 0;
+}
+
+/* ---- Perusasetukset html ja body ---- */
+html {
+  font-size: 16px; /* perusfonttikoko */
+}
+
+body {
+  font-family: var(--font-body); /* leipätekstifontti */
+  background-color: var(--ink);  /* tumma tausta */
+  color: var(--parchment);       /* vaalea teksti */
+  min-height: 100vh;             /* vähintään koko ruudun korkeus */
+  overflow-x: hidden;            /* estä vaakavieritys */
+  line-height: 1.6;              /* rivinkorkeus */
+}
+
+/* ============================================================
+   TAUSTADEKORAATIOT
+   ============================================================ */
+
+/* Taustakerros: kiinnitetty, ei reagoi klikkauksiin */
+.bg-layer {
+  position: fixed;     /* pysyy paikallaan vierittäessä */
+  inset: 0;            /* täyttää koko ruudun */
+  z-index: 0;          /* sisällön alle */
+  pointer-events: none;/* klikkaukset menevät läpi */
+  overflow: hidden;    /* leikkaa yli menevät osat */
+}
+
+/* Iso läpinäkyvä kanji oikeassa reunassa */
+.bg-kanji {
+  position: absolute;
+  right: -80px;
+  top: 50%;
+  transform: translateY(-50%); /* pystykeskitys */
+  font-family: var(--font-display);
+  font-size: clamp(300px, 35vw, 600px); /* skaalautuu ruudun mukaan */
+  font-weight: 800;
+  color: transparent;          /* täyttö pois */
+  -webkit-text-stroke: 1px rgba(184, 146, 10, 0.07); /* ohut kultareuna */
+  line-height: 1;
+  user-select: none;           /* ei valittavissa */
+}
+
+/* Pehmeät värilliset taustaympyrät */
+.bg-circle {
+  position: absolute;
+  border-radius: 50%; /* ympyrä */
+}
+/* Punertava ympyrä vasemmassa yläkulmassa */
+.bg-circle.c1 {
+  width: 500px;
+  height: 500px;
+  top: -150px;
+  left: -100px;
+  background: radial-gradient(circle, rgba(192,57,43,0.08) 0%, transparent 70%);
+}
+/* Kullanvärinen ympyrä oikeassa alakulmassa */
+.bg-circle.c2 {
+  width: 400px;
+  height: 400px;
+  bottom: -100px;
+  right: 200px;
+  background: radial-gradient(circle, rgba(184,146,10,0.06) 0%, transparent 70%);
+}
+
+/* ============================================================
+   AUTH - kirjautuminen ja rekisteröinti
+   ============================================================ */
+
+/* Keskittävä kääre koko näkymälle */
+.auth-wrap {
+  position: relative;       /* taustan päälle */
+  z-index: 1;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;      /* pystykeskitys */
+  justify-content: center;  /* vaakakeskitys */
+  padding: 24px;
+}
+
+/* Lasimainen korttikontti */
+.auth-container {
+  width: 100%;
+  max-width: 460px;
+  background: rgba(253, 250, 245, 0.05); /* hyvin haalea valkoinen */
+  backdrop-filter: blur(16px);           /* lasiefekti */
+  border: 1px solid rgba(184, 146, 10, 0.2); /* ohut kultareuna */
+  border-radius: var(--radius-lg);
+  padding: 40px 36px;
+  box-shadow: var(--shadow-lg);
+}
+
+/* ---- Logo ---- */
+.auth-logo {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+/* Punainen kanji-logo */
+.logo-kanji {
+  font-family: var(--font-display);
+  font-size: 64px;
+  font-weight: 800;
+  color: var(--red);
+  line-height: 1;
+  text-shadow: 0 0 30px var(--red-glow); /* hehku */
+}
+
+/* Logon tekstiosa pystyriviin */
+.logo-text {
+  display: flex;
+  flex-direction: column;
+}
+/* Pääteksti JUDOVISA */
+.logo-main {
+  font-family: var(--font-display);
+  font-size: 28px;
+  font-weight: 800;
+  color: var(--white);
+  letter-spacing: 0.08em;
+}
+/* Alateksti japaniksi */
+.logo-sub {
+  font-family: var(--font-jp);
+  font-size: 12px;
+  color: var(--gold);
+  letter-spacing: 0.2em;
+  margin-top: 2px;
+}
+
+/* ---- Välilehdet ---- */
+.auth-tabs {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 28px;
+  background: rgba(255,255,255,0.04); /* haalea pohja */
+  border-radius: 10px;
+  padding: 4px;
+}
+
+/* Yksittäinen välilehtipainike */
+.tab-btn {
+  flex: 1;                  /* jakaa tilan tasan */
+  padding: 12px;
+  background: transparent;
+  border: none;
+  border-radius: 8px;
+  color: var(--muted);
+  font-family: var(--font-body);
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: var(--transition);
+}
+/* Aktiivinen välilehti korostettuna */
+.tab-btn.active {
+  background: var(--red);
+  color: var(--white);
+}
+
+/* ---- Lomakkeet ---- */
+/* Lomake piilossa oletuksena */
+.auth-form {
+  display: none;
+  flex-direction: column;
+  gap: 18px;
+}
+/* Aktiivinen lomake näkyviin */
+.auth-form.active {
+  display: flex;
+}
+
+/* Kenttäryhmä: label + input pystyyn */
+.field-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+/* Kentän otsikko */
+.field-group label {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--parchment);
+}
+
+/* Pieni vihjeteksti labelin perässä */
+.field-group .hint {
+  font-weight: 400;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+/* Tekstikentät */
+.field-group input {
+  width: 100%;
+  padding: 13px 14px;
+  background: rgba(0,0,0,0.25);
+  border: 1px solid rgba(184, 146, 10, 0.25);
+  border-radius: var(--radius);
+  color: var(--white);
+  font-family: var(--font-body);
+  font-size: 15px;
+  transition: var(--transition);
+}
+/* Kentän fokus: kirkkaampi reuna ja hehku */
+.field-group input:focus {
+  outline: none;
+  border-color: var(--red);
+  box-shadow: 0 0 0 3px var(--red-glow);
+}
+
+/* Salasanakentän kääre, jotta silmäpainike asettuu oikein */
+.pw-wrap {
+  position: relative;
+}
+/* Tilaa painikkeelle oikeaan reunaan */
+.pw-wrap input {
+  padding-right: 44px;
+}
+/* Näytä/piilota-painike kentän sisällä */
+.pw-toggle {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: transparent;
+  border: none;
+  color: var(--muted);
+  cursor: pointer;
+  font-size: 16px;
+  padding: 4px 8px;
+}
+
+/* ---- Pääpainike ---- */
+.btn-primary {
+  width: 100%;
+  padding: 14px;
+  margin-top: 6px;
+  background: var(--red);
+  border: none;
+  border-radius: var(--radius);
+  color: var(--white);
+  font-family: var(--font-body);
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: var(--transition);
+}
+/* Painikkeen hover: tummempi punainen */
+.btn-primary:hover {
+  background: var(--red-deep);
+}
+/* Estetty painike haaleana */
+.btn-primary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* ---- Viestialue ---- */
+.auth-message {
+  font-size: 14px;
+  text-align: center;
+  min-height: 20px; /* varaa tilaa ettei layout hyppää */
+}
+/* Virheviesti punaisella */
+.auth-message.error {
+  color: var(--wrong);
+}
+/* Onnistumisviesti vihreällä */
+.auth-message.success {
+  color: var(--correct);
+}
