@@ -313,3 +313,834 @@ body {
 .auth-message.success {
   color: var(--correct);
 }
+
+/* ============================================================
+   PELIN YLÄPALKKI
+   ============================================================ */
+
+/* Yläpalkki: kiinnitetty sivun yläreunaan */
+.game-header {
+  display: flex;
+  align-items: center;
+  padding: 14px 24px;
+  background: rgba(26, 18, 8, 0.85);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(184, 146, 10, 0.15);
+  position: sticky; /* pysyy näkyvissä vieritettäessä */
+  top: 0;
+  z-index: 50;
+  gap: 16px;
+}
+
+/* Logo-osa vasemmalla */
+.header-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0; /* ei kutistu */
+}
+
+/* Pieni kanji-logo */
+.logo-kanji-sm {
+  font-family: var(--font-display);
+  font-size: 28px;
+  color: var(--red);
+  line-height: 1;
+}
+
+/* Yläpalkin otsikko */
+.header-title {
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  color: var(--white);
+}
+
+/* Käyttäjätiedot: työnnetään oikealle */
+.header-user {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-left: auto; /* työntää loput oikealle */
+  font-size: 14px;
+}
+
+/* Käyttäjänimi */
+#header-username {
+  color: var(--parchment);
+  font-weight: 500;
+}
+
+/* Roolimerkki (pelaaja/admin) */
+.user-badge {
+  font-size: 11px;
+  padding: 3px 9px;
+  border-radius: 20px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+/* Pelaajan merkki vihreänä */
+.user-badge.player {
+  background: rgba(46, 125, 70, 0.2);
+  color: #5aad78;
+  border: 1px solid rgba(46, 125, 70, 0.3);
+}
+/* Adminin merkki punaisena */
+.user-badge.admin {
+  background: rgba(192, 57, 43, 0.2);
+  color: #e87058;
+  border: 1px solid rgba(192, 57, 43, 0.3);
+}
+
+/* Toimintopainikkeiden ryhmä */
+.header-actions {
+  display: flex;
+  gap: 6px;
+}
+
+/* Yksittäinen ikonipainike */
+.btn-icon {
+  width: 38px;
+  height: 38px;
+  border-radius: 9px;
+  border: 1px solid rgba(184, 146, 10, 0.2);
+  background: rgba(255,255,255,0.04);
+  color: var(--muted);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  transition: all var(--transition);
+}
+/* Ikonipainikkeen hover */
+.btn-icon:hover {
+  background: rgba(255,255,255,0.09);
+  color: var(--gold);
+  border-color: rgba(184, 146, 10, 0.4);
+}
+/* Vaarallisen painikkeen hover (uloskirjautuminen) */
+.btn-icon.danger:hover {
+  background: var(--red-glow);
+  color: var(--red);
+  border-color: rgba(192, 57, 43, 0.4);
+}
+
+/* ============================================================
+   PELIN ASETTELU
+   ============================================================ */
+
+/* Kaksipalstainen ruudukko: sisältö + sivupalkki */
+.game-layout {
+  display: grid;
+  grid-template-columns: 1fr 300px; /* pääsisältö joustaa, sivupalkki kiinteä */
+  gap: 24px;
+  padding: 28px 24px;
+  max-width: 1100px;
+  margin: 0 auto; /* keskitetään */
+  width: 100%;
+  align-items: start;
+}
+
+/* Pääsisältö: salli kutistuminen */
+.game-main { min-width: 0; }
+
+/* Näytöt piilossa oletuksena */
+.screen { display: none; }
+/* Aktiivinen näyttö näkyviin */
+.screen.active { display: block; animation: fadeInView 0.3s ease forwards; }
+
+/* Näkymän sisääntuloanimaatio */
+@keyframes fadeInView {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ============================================================
+   ALOITUSNÄYTTÖ
+   ============================================================ */
+
+/* Aloitussisältö keskitettynä pystyyn */
+.start-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 60px 24px;
+  gap: 20px;
+}
+
+/* Iso ääriviivakanji */
+.start-kanji-display {
+  font-family: var(--font-display);
+  font-size: 100px;
+  font-weight: 800;
+  color: transparent;
+  -webkit-text-stroke: 2px var(--red); /* punainen ääriviiva */
+  line-height: 1;
+  filter: drop-shadow(0 0 20px rgba(192,57,43,0.4));
+}
+
+/* Aloitusotsikko */
+.start-title {
+  font-family: var(--font-display);
+  font-size: 48px;
+  font-weight: 800;
+  color: var(--white);
+  letter-spacing: 0.05em;
+}
+
+/* Aloituksen alaotsikko */
+.start-subtitle {
+  font-size: 16px;
+  color: var(--muted);
+  letter-spacing: 0.08em;
+}
+
+/* Tietosirujen rivi */
+.start-info {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+/* Yksittäinen tietosiru */
+.info-chip {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 16px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(184, 146, 10, 0.2);
+  border-radius: 30px;
+  font-size: 13px;
+  color: var(--gold);
+}
+
+/* Iso aloituspainike */
+.btn-start {
+  margin-top: 12px;
+  padding: 18px 48px;
+  background: var(--red);
+  color: var(--white);
+  border: none;
+  border-radius: 50px;
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: 600;
+  cursor: pointer;
+  letter-spacing: 0.06em;
+  transition: all var(--transition);
+}
+/* Aloituspainikkeen hover */
+.btn-start:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 40px var(--red-glow);
+}
+
+/* Oma paras tulos */
+.my-best-score {
+  font-size: 13px;
+  color: var(--gold);
+  opacity: 0.8;
+}
+
+/* ============================================================
+   KYSYMYSNÄYTTÖ
+   ============================================================ */
+
+/* Edistymispalkin kääre */
+.progress-bar-wrap {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 24px;
+}
+
+/* Edistymispalkin tausta */
+.progress-bar-track {
+  flex: 1;
+  height: 6px;
+  background: rgba(255,255,255,0.08);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+/* Edistymispalkin täyttö */
+.progress-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--red), var(--gold));
+  border-radius: 3px;
+  transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  width: 0%;
+}
+
+/* Edistymisen tekstinumero */
+.progress-label {
+  font-size: 13px;
+  color: var(--muted);
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums; /* numerot tasaleveinä */
+}
+
+/* Kysymyskortti */
+.question-card {
+  background: rgba(253, 250, 245, 0.04);
+  border: 1px solid rgba(184, 146, 10, 0.18);
+  border-radius: var(--radius-lg);
+  padding: 36px;
+  box-shadow: var(--shadow-lg);
+}
+
+/* Kategoriamerkki */
+.question-category {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 14px;
+  background: rgba(192, 57, 43, 0.15);
+  border: 1px solid rgba(192, 57, 43, 0.3);
+  border-radius: 20px;
+  font-size: 12px;
+  color: #e87058;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-weight: 600;
+  margin-bottom: 20px;
+}
+
+/* Kysymysteksti */
+.question-text {
+  font-family: var(--font-display);
+  font-size: clamp(20px, 3vw, 26px);
+  font-weight: 600;
+  color: var(--white);
+  line-height: 1.4;
+  margin-bottom: 24px;
+}
+
+/* Yritysmittarin rivi */
+.attempts-display {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+/* Yritysmittarin teksti */
+.attempts-label {
+  font-size: 12px;
+  color: var(--muted);
+  letter-spacing: 0.04em;
+}
+
+/* Yrityspisteiden rivi */
+.attempts-dots {
+  display: flex;
+  gap: 6px;
+}
+
+/* Yksittäinen yrityspiste */
+.attempt-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.15);
+  border: 1px solid rgba(255,255,255,0.2);
+  transition: all 0.3s ease;
+}
+/* Käytetty yrityspiste punaisena */
+.attempt-dot.used {
+  background: rgba(192, 57, 43, 0.5);
+  border-color: var(--red);
+}
+
+/* Vastausalue */
+.answer-area { margin-bottom: 24px; }
+
+/* Syötteen ja painikkeen rivi */
+.answer-input-wrap {
+  display: flex;
+  gap: 10px;
+}
+
+/* Vastauskenttä */
+.answer-input {
+  flex: 1;
+  background: rgba(255,255,255,0.07);
+  border: 1px solid rgba(184, 146, 10, 0.25);
+  border-radius: 10px;
+  padding: 14px 18px;
+  font-size: 16px;
+  color: var(--white);
+  outline: none;
+  transition: all var(--transition);
+}
+/* Vastauskentän fokus */
+.answer-input:focus {
+  border-color: var(--gold);
+  background: rgba(255,255,255,0.10);
+  box-shadow: 0 0 0 3px rgba(184, 146, 10, 0.12);
+}
+/* Tärinäanimaatio väärälle vastaukselle */
+.answer-input.shake {
+  animation: shake 0.4s ease;
+}
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20%       { transform: translateX(-8px); }
+  40%       { transform: translateX(8px); }
+  60%       { transform: translateX(-5px); }
+  80%       { transform: translateX(5px); }
+}
+
+/* Tarkistuspainike */
+.btn-check {
+  padding: 14px 22px;
+  background: var(--ink-soft, #2d2416);
+  border: 1px solid rgba(184, 146, 10, 0.3);
+  border-radius: 10px;
+  color: var(--gold);
+  cursor: pointer;
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  transition: all var(--transition);
+  min-width: 80px;
+}
+/* Tarkistuspainikkeen alateksti */
+.btn-sub {
+  font-family: var(--font-body);
+  font-size: 10px;
+  color: var(--muted);
+}
+/* Tarkistuspainikkeen hover */
+.btn-check:hover {
+  background: var(--gold);
+  border-color: var(--gold);
+  color: var(--ink);
+}
+.btn-check:hover .btn-sub { color: var(--ink); }
+
+/* Palautealue */
+.feedback-area {
+  margin-top: 12px;
+  min-height: 36px;
+}
+
+/* Palauteviesti */
+.feedback-msg {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 16px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+}
+/* Oikea vastaus vihreänä */
+.feedback-msg.correct {
+  background: rgba(46, 125, 70, 0.12);
+  color: #5aad78;
+  border: 1px solid rgba(46, 125, 70, 0.25);
+}
+/* Väärä vastaus punaisena */
+.feedback-msg.wrong {
+  background: rgba(192, 57, 43, 0.10);
+  color: #e87058;
+  border: 1px solid rgba(192, 57, 43, 0.25);
+}
+/* Sama vastaus keltaisena */
+.feedback-msg.same {
+  background: rgba(138, 104, 0, 0.10);
+  color: #c8a835;
+  border: 1px solid rgba(138, 104, 0, 0.25);
+}
+/* Yritykset loppu harmaana */
+.feedback-msg.out {
+  background: rgba(100,100,100,0.1);
+  color: var(--muted);
+  border: 1px solid rgba(255,255,255,0.1);
+}
+
+/* Annettujen vastausten kääre */
+.given-answers-wrap { margin-top: 8px; }
+/* Annettujen vastausten otsikko */
+.given-answers-title {
+  font-size: 12px;
+  color: var(--muted);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+/* Annettujen vastausten lista */
+.given-answers-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+/* Vastaussiru */
+.answer-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 500;
+}
+/* Oikea vastaussiru */
+.answer-chip.correct {
+  background: rgba(46, 125, 70, 0.12);
+  color: #5aad78;
+  border: 1px solid rgba(46,125,70,0.3);
+}
+/* Väärä vastaussiru yliviivattuna */
+.answer-chip.wrong {
+  background: rgba(255,255,255,0.04);
+  color: var(--muted);
+  border: 1px solid rgba(255,255,255,0.1);
+  text-decoration: line-through;
+}
+/* Sama vastaussiru */
+.answer-chip.same {
+  background: rgba(138, 104, 0, 0.10);
+  color: #c8a835;
+  border: 1px solid rgba(138,104,0,0.3);
+}
+
+/* Ohituspainike */
+.btn-skip {
+  margin-top: 16px;
+  background: transparent;
+  border: none;
+  color: var(--muted);
+  font-size: 13px;
+  cursor: pointer;
+  padding: 8px 0;
+  transition: color var(--transition);
+}
+.btn-skip:hover { color: var(--gold); }
+
+/* ============================================================
+   TULOSNÄYTTÖ
+   ============================================================ */
+
+/* Tulosten kääre pystyyn */
+.results-container {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+/* Tulosten kärkiosa */
+.results-hero {
+  text-align: center;
+  padding: 48px 24px 36px;
+  background: rgba(253,250,245,0.03);
+  border: 1px solid rgba(184,146,10,0.15);
+  border-radius: var(--radius-lg);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Tuloskanji */
+.results-kanji {
+  font-family: var(--font-display);
+  font-size: 80px;
+  font-weight: 800;
+  color: transparent;
+  -webkit-text-stroke: 2px var(--gold);
+  line-height: 1;
+  margin-bottom: 12px;
+}
+
+/* Tulosotsikko */
+.results-title {
+  font-family: var(--font-display);
+  font-size: 28px;
+  font-weight: 800;
+  color: var(--white);
+  margin-bottom: 16px;
+}
+
+/* Iso pisteluku rivi */
+.results-score-big {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 8px;
+}
+/* Iso pisteluku */
+.results-score-big span:first-child {
+  font-family: var(--font-display);
+  font-size: 72px;
+  font-weight: 800;
+  color: var(--gold);
+  line-height: 1;
+}
+/* Pisteluvun selite */
+.results-points-label {
+  font-size: 18px;
+  color: var(--muted);
+}
+
+/* Prosenttiluku */
+.results-percentage {
+  margin-top: 8px;
+  font-size: 16px;
+  color: var(--gold);
+  opacity: 0.8;
+}
+
+/* Erittelyruudukko kolmeen */
+.results-breakdown {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+
+/* Erittelyruutu */
+.breakdown-item {
+  text-align: center;
+  padding: 20px 16px;
+  border-radius: var(--radius);
+  border: 1px solid rgba(255,255,255,0.08);
+}
+/* Erittelyruutujen värit */
+.breakdown-item.correct { border-color: rgba(46,125,70,0.3); background: rgba(46,125,70,0.07); }
+.breakdown-item.wrong   { border-color: rgba(192,57,43,0.3); background: rgba(192,57,43,0.07); }
+.breakdown-item.skipped { border-color: rgba(138,104,0,0.3); background: rgba(138,104,0,0.07); }
+
+/* Erittelyn luku */
+.breakdown-count {
+  font-family: var(--font-display);
+  font-size: 36px;
+  font-weight: 800;
+  line-height: 1;
+  margin-bottom: 6px;
+}
+.breakdown-item.correct .breakdown-count { color: #5aad78; }
+.breakdown-item.wrong .breakdown-count   { color: #e87058; }
+.breakdown-item.skipped .breakdown-count { color: #c8a835; }
+
+/* Erittelyn selite */
+.breakdown-label {
+  font-size: 12px;
+  color: var(--muted);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+/* Kategoriatulosten lista */
+.category-results {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* Yksittäinen kategoriatulos */
+.cat-result-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 18px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: var(--radius);
+}
+
+/* Kategorian nimi */
+.cat-result-name {
+  flex: 1;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--parchment);
+}
+
+/* Kategorian palkin kääre */
+.cat-result-bar-wrap {
+  flex: 2;
+  height: 6px;
+  background: rgba(255,255,255,0.08);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+/* Kategorian palkki */
+.cat-result-bar {
+  height: 100%;
+  border-radius: 3px;
+  background: linear-gradient(90deg, var(--red), var(--gold));
+  transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Kategorian pisteluku */
+.cat-result-pct {
+  font-size: 13px;
+  color: var(--gold);
+  min-width: 36px;
+  text-align: right;
+}
+
+/* Tulostoimintojen rivi */
+.results-actions {
+  display: flex;
+  justify-content: center;
+}
+
+/* ============================================================
+   SIVUPALKKI
+   ============================================================ */
+
+/* Sivupalkki pystyyn */
+.game-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding-top: 50px;
+}
+
+/* Sivupalkin kortti */
+.sidebar-card {
+  background: rgba(253,250,245,0.04);
+  border: 1px solid rgba(184,146,10,0.15);
+  border-radius: var(--radius-lg);
+  padding: 22px;
+  box-shadow: var(--shadow-lg);
+}
+
+/* Sivupalkin otsikko */
+.sidebar-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-display);
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--gold);
+  margin-bottom: 18px;
+  letter-spacing: 0.04em;
+}
+
+/* Tulostaulukon lista */
+.leaderboard {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* Tulostaulukon rivi */
+.lb-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: 9px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.06);
+  transition: all var(--transition);
+}
+/* Tulostaulukon rivin hover */
+.lb-item:hover {
+  background: rgba(255,255,255,0.06);
+  border-color: rgba(184,146,10,0.2);
+}
+/* Kolmen kärjen erikoisvärit */
+.lb-item:nth-child(1) { border-color: rgba(232,200,64,0.4); background: rgba(232,200,64,0.06); }
+.lb-item:nth-child(2) { border-color: rgba(192,192,192,0.3); background: rgba(192,192,192,0.04); }
+.lb-item:nth-child(3) { border-color: rgba(205,127,50,0.3); background: rgba(205,127,50,0.04); }
+
+/* Sijoitusnumero */
+.lb-rank {
+  font-family: var(--font-display);
+  font-size: 16px;
+  font-weight: 800;
+  min-width: 24px;
+  text-align: center;
+}
+.lb-item:nth-child(1) .lb-rank { color: #e8c840; }
+.lb-item:nth-child(2) .lb-rank { color: #c0c0c0; }
+.lb-item:nth-child(3) .lb-rank { color: #cd7f32; }
+.lb-rank .default { color: var(--muted); font-size: 13px; }
+
+/* Tulostaulukon nimi */
+.lb-name {
+  flex: 1;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--parchment);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+/* Oma nimi korostettuna */
+.lb-name.is-me { color: var(--gold); }
+
+/* Tulostaulukon pisteet */
+.lb-score {
+  font-family: var(--font-display);
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--gold);
+}
+
+/* Latausteksti */
+.lb-loading {
+  color: var(--muted);
+  font-size: 13px;
+  padding: 8px;
+}
+
+/* Omien tulosten lista */
+.my-scores {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* Oman tuloksen rivi */
+.my-score-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 9px 12px;
+  background: rgba(255,255,255,0.03);
+  border-radius: 8px;
+  font-size: 13px;
+}
+/* Oman tuloksen prosentti */
+.my-score-pct {
+  font-weight: 700;
+  color: var(--gold);
+}
+/* Oman tuloksen päivä */
+.my-score-date {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+/* ============================================================
+   RESPONSIIVISUUS
+   ============================================================ */
+
+/* Kapeilla näytöillä sivupalkki pääsisällön alle */
+@media (max-width: 860px) {
+  .game-layout {
+    grid-template-columns: 1fr; /* yksi palsta */
+  }
+  /* Mobiilissa ei yläväliä, sivupalkki tulee heti sisällön perään */
+  .game-sidebar {
+    padding-top: 0;
+  }
+}

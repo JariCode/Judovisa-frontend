@@ -1,11 +1,190 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fi">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Judovisa peli</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Judovisa · Peli</title>
+  <!-- Esiyhdistä Google-fontteihin -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <!-- Dojo-teeman fontit -->
+  <link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;600;800&family=Noto+Sans+JP:wght@300;400;500&family=Zen+Kaku+Gothic+New:wght@300;400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-    
+
+  <!-- Taustadekoraatiot -->
+  <div class="bg-layer">
+    <div class="bg-kanji" aria-hidden="true">柔</div>
+    <div class="bg-circle c1"></div>
+    <div class="bg-circle c2"></div>
+  </div>
+
+  <!-- Yläpalkki: logo, käyttäjätiedot, toimintopainikkeet -->
+  <header class="game-header">
+    <!-- Logo vasemmalla -->
+    <div class="header-logo">
+      <span class="logo-kanji-sm">柔</span>
+      <span class="header-title">JUDOVISA</span>
+    </div>
+    <!-- Käyttäjätiedot: nimi ja rooli -->
+    <div class="header-user">
+      <span id="header-username"></span>
+      <span class="user-badge" id="header-role"></span>
+    </div>
+    <!-- Toimintopainikkeet oikealla -->
+    <div class="header-actions">
+      <!-- Profiilisivulle -->
+      <button class="btn-icon" id="btn-profile" title="Profiili" type="button">👤</button>
+      <!-- Admin-sivulle, näkyy vain admineille -->
+      <button class="btn-icon" id="btn-admin" title="Admin" type="button" style="display:none">★</button>
+      <!-- Uloskirjautuminen -->
+      <button class="btn-icon danger" id="btn-logout" title="Kirjaudu ulos" type="button">⏻</button>
+    </div>
+  </header>
+
+  <!-- Pelin pääasettelu: sisältö vasemmalla, sivupalkki oikealla -->
+  <div class="game-layout">
+
+    <!-- Pääsisältö: vaihtuvat näytöt -->
+    <main class="game-main">
+
+      <!-- NÄYTTÖ: aloitus -->
+      <section id="screen-start" class="screen active">
+        <div class="start-content">
+          <!-- Iso kanji -->
+          <div class="start-kanji-display">道</div>
+          <!-- Otsikko ja alaotsikko -->
+          <h1 class="start-title">Judovisa</h1>
+          <p class="start-subtitle">Testaa judotietämyksesi</p>
+          <!-- Tietosirut: kategorioiden määrä ja pistesääntö -->
+          <div class="start-info">
+            <div class="info-chip">7 kategoriaa</div>
+            <div class="info-chip">1 piste / oikea vastaus</div>
+          </div>
+          <!-- Aloituspainike -->
+          <button class="btn-start" id="btn-start-game" type="button">始める · Aloita visa</button>
+          <!-- Oma paras tulos -->
+          <div class="my-best-score" id="my-best-score"></div>
+        </div>
+      </section>
+
+      <!-- NÄYTTÖ: kysymys -->
+      <section id="screen-question" class="screen">
+        <!-- Edistymispalkki -->
+        <div class="progress-bar-wrap">
+          <div class="progress-bar-track">
+            <div class="progress-bar-fill" id="progress-fill"></div>
+          </div>
+          <div class="progress-label">
+            <span id="progress-current">1</span> / <span id="progress-total">7</span>
+          </div>
+        </div>
+
+        <!-- Kysymyskortti -->
+        <div class="question-card" id="question-card">
+          <!-- Kategoria -->
+          <div class="question-category" id="q-category"></div>
+          <!-- Kysymysteksti -->
+          <h2 class="question-text" id="q-text"></h2>
+          <!-- Yritysmittari pisteinä -->
+          <div class="attempts-display">
+            <span class="attempts-label">Yrityksiä jäljellä:</span>
+            <div class="attempts-dots" id="attempts-dots"></div>
+          </div>
+
+          <!-- Vastausalue: syöte ja tarkistuspainike -->
+          <div class="answer-area">
+            <div class="answer-input-wrap">
+              <input type="text"
+                     id="answer-input"
+                     class="answer-input"
+                     placeholder="Kirjoita vastaus..."
+                     autocomplete="off"
+                     autocorrect="off"
+                     spellcheck="false">
+              <button class="btn-check" id="btn-check" type="button">
+                確認
+                <span class="btn-sub">Tarkista</span>
+              </button>
+            </div>
+            <!-- Palauteviestialue -->
+            <div class="feedback-area" id="feedback-area"></div>
+          </div>
+
+          <!-- Annetut vastaukset siruina -->
+          <div class="given-answers-wrap">
+            <div class="given-answers-title" id="given-title"></div>
+            <div class="given-answers-list" id="given-answers"></div>
+          </div>
+        </div>
+
+        <!-- Kysymyksen ohitus -->
+        <button class="btn-skip" id="btn-skip" type="button">Ohita kysymys →</button>
+      </section>
+
+      <!-- NÄYTTÖ: tulokset -->
+      <section id="screen-results" class="screen">
+        <div class="results-container">
+          <!-- Tulosten kärki: kanji, otsikko, pisteet, prosentti -->
+          <div class="results-hero">
+            <div class="results-kanji" id="results-kanji">優</div>
+            <h2 class="results-title" id="results-title">Erinomainen!</h2>
+            <div class="results-score-big">
+              <span id="results-points">0</span>
+              <span class="results-points-label">pistettä</span>
+            </div>
+            <div class="results-percentage" id="results-pct"></div>
+          </div>
+
+          <!-- Erittely: oikein, väärin, ohitettu -->
+          <div class="results-breakdown">
+            <div class="breakdown-item correct">
+              <div class="breakdown-count" id="res-correct">0</div>
+              <div class="breakdown-label">Oikein</div>
+            </div>
+            <div class="breakdown-item wrong">
+              <div class="breakdown-count" id="res-wrong">0</div>
+              <div class="breakdown-label">Väärin</div>
+            </div>
+            <div class="breakdown-item skipped">
+              <div class="breakdown-count" id="res-skipped">0</div>
+              <div class="breakdown-label">Ohitettu</div>
+            </div>
+          </div>
+
+          <!-- Kategoriakohtaiset tulokset -->
+          <div class="category-results" id="category-results"></div>
+
+          <!-- Toiminnot: pelaa uudelleen -->
+          <div class="results-actions">
+            <button class="btn-primary" id="btn-play-again" type="button">Pelaa uudelleen</button>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- Sivupalkki: Top 10 ja omat tulokset -->
+    <aside class="game-sidebar">
+      <!-- Top 10 -kortti -->
+      <div class="sidebar-card">
+        <h3 class="sidebar-title">順位 · TOP 10</h3>
+        <ol class="leaderboard" id="leaderboard">
+          <li class="lb-loading">Ladataan...</li>
+        </ol>
+      </div>
+
+      <!-- Omat tulokset -kortti -->
+      <div class="sidebar-card">
+        <h3 class="sidebar-title">Omat tulokset</h3>
+        <div id="my-scores-list" class="my-scores"></div>
+      </div>
+    </aside>
+  </div>
+
+  <!-- Skriptit -->
+  <script src="js/api.js"></script>
+  <script src="js/game.js"></script>
 </body>
 </html>
