@@ -48,6 +48,24 @@ const api = {
     me: () =>
       apiRequest('/auth/me', { method: 'GET' }),
   },
+  // Kootut visa-kutsut
+  quiz: {
+    // Hae kysymykset (ilman vastauksia)
+    getQuestions: () =>
+      apiRequest('/quiz/questions', { method: 'GET' }),
+    // Tarkista yksittäinen vastaus
+    checkAnswer: (questionId, given) =>
+      apiRequest('/quiz/check', { method: 'POST', body: { questionId, given } }),
+    // Tallenna pelin pisteet
+    saveScore: (correct, wrong, totalQuestions) =>
+      apiRequest('/quiz/score', { method: 'POST', body: { correct, wrong, totalQuestions } }),
+    // Hae Top 10
+    getTop10: () =>
+      apiRequest('/quiz/top10', { method: 'GET' }),
+    // Hae omat tulokset
+    getMyScores: () =>
+      apiRequest('/quiz/my-scores', { method: 'GET' }),
+  },
 };
 
 // Tuo api globaaliksi muille skripteille
