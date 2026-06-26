@@ -1135,6 +1135,7 @@ body {
    ============================================================ */
 
 /* Kapeilla näytöillä sivupalkki pääsisällön alle */
+/* Kapeilla näytöillä sivupalkki pääsisällön alle */
 @media (max-width: 860px) {
   .game-layout {
     grid-template-columns: 1fr; /* yksi palsta */
@@ -1142,5 +1143,22 @@ body {
   /* Mobiilissa ei yläväliä, sivupalkki tulee heti sisällön perään */
   .game-sidebar {
     padding-top: 0;
+  }
+  /* Pienennä aloituspainiketta mobiilissa */
+  .btn-start {
+    padding: 14px 32px;  /* pienemmät reunukset */
+    font-size: 16px;     /* pienempi fontti */
+  }
+  /* Pienennä aloitusotsikkoa mobiilissa */
+  .start-title {
+    font-size: 36px;
+  }
+  /* Pienennä aloituksen iso kanji mobiilissa */
+  .start-kanji-display {
+    font-size: 72px;
+  }
+  /* Tiiviimpi aloitusnäkymä */
+  .start-content {
+    padding: 20px 16px 40px;
   }
 }

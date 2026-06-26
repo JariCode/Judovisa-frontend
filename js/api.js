@@ -2,7 +2,7 @@
 // Apuri backend-kutsuihin - keskittää osoitteen ja fetch-asetukset
 
 // Backendin perusosoite paikallisessa kehityksessä
-const API_BASE = 'http://localhost:5000/api';
+const API_BASE = 'http://127.0.0.1:5000/api';
 
 // Yleinen pyyntöfunktio - hoitaa JSON-otsikot ja evästeet
 async function apiRequest(path, options = {}) {
@@ -44,6 +44,9 @@ const api = {
     // Kirjaudu ulos
     logout: () =>
       apiRequest('/auth/logout', { method: 'POST' }),
+    // Hae kirjautuneen käyttäjän tiedot
+    me: () =>
+      apiRequest('/auth/me', { method: 'GET' }),
   },
 };
 
