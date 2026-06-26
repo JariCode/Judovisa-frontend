@@ -24,7 +24,7 @@ async function initUser() {
   currentUser = res.user;
 
   // Näytä käyttäjänimi yläpalkissa
-  document.getElementById('header-username').textContent = res.user.username;
+  document.getElementById('header-username').textContent = res.user.displayName;
 
   // Näytä rooli merkkinä (pelaaja tai admin)
   const roleBadge = document.getElementById('header-role');
@@ -470,12 +470,12 @@ async function loadLeaderboard() {
       const li = document.createElement('li');
       li.className = 'lb-item';
       // Onko tämä kirjautunut käyttäjä
-      const isMe = currentUser && s.username === currentUser.username;
+      const isMe = currentUser && s.displayName === currentUser.displayName;
       // Mitali tai sijaluku
       const rank = medals[i] || `<span class="default">${i + 1}</span>`;
       li.innerHTML = `
         <div class="lb-rank">${rank}</div>
-        <div class="lb-name ${isMe ? 'is-me' : ''}">${escHtml(s.username)}${isMe ? ' (sinä)' : ''}</div>
+        <div class="lb-name ${isMe ? 'is-me' : ''}">${escHtml(s.displayName)}${isMe ? ' (sinä)' : ''}</div>
         <div class="lb-score">${s.bestScore}</div>
       `;
       container.appendChild(li);
