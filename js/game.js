@@ -284,7 +284,10 @@ async function checkAnswer() {
     input.classList.add('shake');
     setTimeout(() => input.classList.remove('shake'), 400);
     // Jos yritykset loppuivat, siirry seuraavaan
-    if (state.attemptsLeft <= 0) nextQuestion(false);
+    if (state.attemptsLeft <= 0) {
+      showFeedback('Olet jo antanut tämän vastauksen, yritykset loppuivat', 'same');
+      setTimeout(() => nextQuestion(false), 1000);
+    }
     return;
   }
 
@@ -333,7 +336,10 @@ async function checkAnswer() {
       input.classList.add('shake');
       setTimeout(() => input.classList.remove('shake'), 400);
       // Jos yritykset loppuivat, siirry seuraavaan
-      if (state.attemptsLeft <= 0) nextQuestion(false);
+      if (state.attemptsLeft <= 0) {
+        showFeedback('Väärä vastaus, yritykset loppuivat', 'wrong');
+        setTimeout(() => nextQuestion(false), 1000);
+      }
     }
   } catch (error) {
     console.error('Vastauksen tarkistus epäonnistui:', error);
