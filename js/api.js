@@ -66,6 +66,18 @@ const api = {
     getMyScores: () =>
       apiRequest('/quiz/my-scores', { method: 'GET' }),
   },
+  //Profiilin muokkaus kutsut
+  profile: {
+    // Päivitä käyttäjätunnus
+    updateUsername: (newUsername) =>
+      apiRequest('/profile/update-username', { method: 'PUT', body: { newUsername } }),
+    // Vaihda salasana
+    changePassword: (currentPassword, newPassword) =>
+      apiRequest('/profile/change-password', { method: 'PUT', body: { currentPassword, newPassword } }),
+    // Poista tili
+    deleteAccount: (password) =>
+      apiRequest('/profile/delete-account', { method: 'DELETE', body: { password } }),
+  }
 };
 
 // Tuo api globaaliksi muille skripteille

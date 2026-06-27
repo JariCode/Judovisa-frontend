@@ -98,7 +98,7 @@ window.togglePassword = function(inputId) {
 };
 
 // ============================================================
-// PROFIILITOIMINNOT (Lomakkeiden lähetykset)
+// PROFIILITOIMINNOT (Aidot API-kutsut tietokantaan)
 // ============================================================
 
 // 1. Tunnuksen muokkaus
@@ -111,8 +111,16 @@ document.getElementById('form-profile-edit').addEventListener('submit', async (e
     return;
   }
 
-  // TODO: Toteuta API-kutsu backend-reitin valmistuessa (esim. api.profile.updateUsername)
-  showProfileMessage('profile-edit-message', 'Tiedot tallennettu! (Vaatii backend-reitin)', 'success');
+  // Kutsutaan uutta api.js-reittiä
+  const res = await api.profile.updateUsername(newUsername);
+
+  if (res.success) {
+    showProfileMessage('profile-edit-message', 'Käyttäjätunnus päivitetty onnistuneesti!', 'success');
+    // Päivitetään heti uusi nimi yläpalkkiin lennosta
+    document.getElementById('header-username').textContent = res.user.displayName;
+  } else {
+    showProfileMessage('profile-edit-message', res.message || 'Tunnuksen vaihto epäonnistui', 'error');
+  }
 });
 
 // 2. Salasanan vaihto
@@ -137,30 +145,72 @@ document.getElementById('form-change-password').addEventListener('submit', async
     return;
   }
 
-  // TODO: Toteuta API-kutsu backend-reitin valmistuessa (esim. api.profile.changePassword)
-  showProfileMessage('profile-pw-message', 'Salasana vaihdettu! (Vaatii backend-reitin)', 'success');
+  // Kutsutaan uutta api.js-reittiä
+  const res = await api.profile.changePassword(currentPw, newPw);
+
+  if (res.success) {
+    showProfileMessage('profile-pw-message', 'Salasana vaihdettu onnistuneesti!', 'success');
+    // Tyhjennetään syötekentät
+    document.getElementById('pw-current').value = '';
+    document.getElementById('pw-new').value = '';
+    document.getElementById('pw-new2').value = '';
+  } else {
+    showProfileMessage('profile-pw-message', res.message || 'Salasanan vaihto epäonnistui', 'error');
+  }
 });
 
-// 3. Tilin poistaminen
+// ============================================================
+// 3. TILIN POISTAMINEN (Kaksivaiheinen tekstivarmistus)
+// ============================================================
+
+// Muuttuja, joka muistaa onko varoitusta vielä näytetty
+let deleteConfirmedOnce = false;
+
 document.getElementById('btn-confirm-delete').addEventListener('click', async () => {
   const password = document.getElementById('delete-confirm-pw').value;
+  const deleteBtn = document.getElementById('btn-confirm-delete');
 
+  // 1. Tarkistetaan ensin, että salasana on kirjoitettu kenttään
   if (!password) {
     showProfileMessage('profile-delete-message', 'Syötä salasanasi vahvistaaksesi poiston', 'error');
+    deleteConfirmedOnce = false;
+    deleteBtn.textContent = 'Poista tili pysyvästi';
     return;
   }
 
-  const varmistus = confirm('Oletko aivan varma? Tätä ei voi peruuttaa ja kaikki pelituloksesi pyyhitään.');
-  if (!varmistus) return;
+  // 2. ENSIMMÄINEN KLIKKAUS: Näytetään varoitusteksti ja muutetaan napin sisältö
+  if (!deleteConfirmedOnce) {
+    showProfileMessage(
+      'profile-delete-message', 
+      'Oletko varma? Tämä toiminto poistaa tilisi ja kaikki pelituloksesi pysyvästi.', 
+      'error'
+    );
+    deleteConfirmedOnce = true;
+    deleteBtn.textContent = '⚠ Olen varma, poista tili';
+    return;
+  }
 
-  // TODO: Toteuta API-kutsu backend-reitin valmistuessa (esim. api.profile.deleteAccount)
-  alert('Tili poistettu! (Toteuta backend-kutsu tässä)');
-  
-  sessionStorage.removeItem('quiz_state');
-  await api.auth.logout();
-  window.location.href = 'index.html';
+  // 3. TOINEN KLIKKAUS: Suoritetaan varsinainen poisto backendissä
+  const res = await api.profile.deleteAccount(password);
+
+  if (res.success) {
+    // Näytetään onnistumisteksti suoraan viestikentässä
+    showProfileMessage('profile-delete-message', 'Tili poistettu onnistuneesti. Ohjataan aloitussivulle...', 'success');
+    
+    // Tyhjennetään pelin tila istunnosta
+    sessionStorage.removeItem('quiz_state');
+    
+    // Ohjataan käyttäjä ulos pienen viiveen jälkeen
+    setTimeout(() => {
+      window.location.href = 'index.html';
+    }, 1500);
+  } else {
+    // Jos salasana oli väärin, näytetään virhe ja nollataan napin tila
+    showProfileMessage('profile-delete-message', res.message || 'Tilin poisto epäonnistui', 'error');
+    deleteConfirmedOnce = false;
+    deleteBtn.textContent = 'Poista tili pysyvästi';
+  }
 });
-
 // ============================================================
 // NAVIGOINTI YLÄPALKKI
 // ============================================================
@@ -180,6 +230,42 @@ document.getElementById('btn-logout').addEventListener('click', async () => {
   sessionStorage.removeItem('quiz_state');
   await api.auth.logout();
   window.location.href = 'index.html';
+});
+
+// ============================================================
+// ENTER-NÄPPÄIMEN KUUNTELIJAT LOMAKKEISSA
+// ============================================================
+
+// 1. Tunnuksen muokkauskenttä
+document.getElementById('edit-username').addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') {
+    e.preventDefault(); // Estetään selaimen oletuskäyttäytyminen
+    // Laukaisemalla 'submit'-tapahtuma, lomakkeen oma addEventListener hoitaa loput
+    document.getElementById('form-profile-edit').requestSubmit();
+  }
+});
+
+// 2. Salasananvaihto-kentät (kaikki kolme kenttää)
+const passwordInputs = ['pw-current', 'pw-new', 'pw-new2'];
+passwordInputs.forEach(id => {
+  const input = document.getElementById(id);
+  if (input) {
+    input.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        document.getElementById('form-change-password').requestSubmit();
+      }
+    });
+  }
+});
+
+// 3. Tilin poiston salasanakenttä
+document.getElementById('delete-confirm-pw').addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') {
+    e.preventDefault();
+    // Koska tilin poisto ei käytä submit-painiketta, klikataan poistonappia ohjelmallisesti
+    document.getElementById('btn-confirm-delete').click();
+  }
 });
 
 // Käynnistä sivun alustus
