@@ -134,12 +134,12 @@ function renderUserTable(usersList) {
 
       const roleBtn = document.createElement('button');
       roleBtn.className = 'admin-btn-sm role-toggle';
-      roleBtn.textContent = isRoleVarmistus ? '⚠ Vahvista rooli' : 'Muuta rooli';
+      roleBtn.textContent = isRoleVarmistus ? '⚠ Vahvista' : 'Muuta rooli';
       roleBtn.addEventListener('click', () => handleRoleToggle(user));
 
       const deleteBtn = document.createElement('button');
       deleteBtn.className = 'admin-btn-sm user-delete';
-      deleteBtn.textContent = isDeleteVarmistus ? '⚠ Poista varmasti' : 'Poista';
+      deleteBtn.textContent = isDeleteVarmistus ? '⚠ Vahvista' : 'Poista';
       deleteBtn.addEventListener('click', () => handleUserDelete(user));
 
       actionsTd.appendChild(roleBtn);

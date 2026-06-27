@@ -1448,11 +1448,42 @@ body {
 
 /* Kapeilla näytöillä sivupalkki pääsisällön alle */
 @media (max-width: 860px) {
-  /*Pienennä headeria, jotta mahtuu paremmin mobiilissa */
+  
+  /* ---- KORJATTU YLÄPALKKI MOBIILIIN ---- */
   .game-header {
-    padding: 8px 12px;
-    gap: 8px;
+    padding: 6px 10px;        /* Tiivistetään ylä- ja alareunoja */
+    gap: 6px;                 /* Pienempi väli elementtien välille */
+    justify-content: space-between;
+    flex-wrap: nowrap;        /* Estetään ehdottomasti elementtejä tippumasta eri riveille */
   }
+  
+  .header-title {
+    font-size: 14px;          /* Pienetitään "JUDOVISA" tekstiä vähän */
+    letter-spacing: 1px;
+  }
+  
+  .logo-kanji-sm {
+    font-size: 14px;          /* Pienempi pikkukanji */
+  }
+
+  #header-username {
+    font-size: 13px;          /* Tiivistetään käyttäjän nimen kokoa */
+    max-width: 80px;          /* Rajataan pituus, jos on pitkä nimi */
+    overflow: hidden;
+    text-overflow: ellipsis;  /* Lisää kolme pistettä, jos nimi on jättipitkä */
+    white-space: nowrap;
+  }
+
+  .header-actions {
+    gap: 4px;                 /* Napit lähemmäksi toisiaan */
+  }
+
+  .btn-icon {
+    padding: 6px;             /* Hieman pienemmät kosketusalueet napeille */
+    font-size: 14px;          /* Pienemmät emojit */
+  }
+
+  /* ---- ENNALLAAN OLEVAT PELISIVUN TYYLIT ---- */
   .game-layout {
     grid-template-columns: 1fr; /* yksi palsta */
   }
@@ -1490,9 +1521,84 @@ body {
     padding: 10px 12px;
     font-size: 14px;
   }
-  /*Pienennnä tarkistuspainiketta mobiilissa */
+  /* Pienennä tarkistuspainiketta mobiilissa ja yhtenäistä korkeus input-kentän kanssa */
   .btn-check {
-    padding: 12px 18px;
+    box-sizing: border-box;
+    height: 42px;                  /* Täsmälleen sama korkeus kuin input-kentillä */
+    padding: 0 18px;               /* Poistetaan ylä- ja alapadding, jätetään vain sivut */
     font-size: 16px;
+    display: inline-flex;          /* Keskittää tekstin ja emojin napin sisällä pystysuunnassa */
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* ---- ENNALLAAN OLEVAT PROFIILISIVUN MOBIILITYYLIT ---- */
+  .profile-layout {
+    margin: 10px auto;
+  }
+  .profile-hero-header {
+    margin-bottom: 20px;
+    gap: 4px;
+  }
+  .profile-kanji-display {
+    font-size: 64px;
+  }
+  .profile-title {
+    font-size: 28px;
+  }
+  .profile-container {
+    padding: 20px 16px;
+  }
+  .profile-tabs {
+    flex-direction: column;
+    gap: 6px;
+    background: transparent;
+    padding: 0;
+  }
+  .tab-btn {
+    background: rgba(255, 255, 255, 0.04);
+    border-radius: 8px;
+    padding: 10px;
+  }
+
+  /* ---- ADMIN-SIVUN MOBIILITYYLIT ---- */
+  .admin-grid {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+    margin-top: 1rem;
+  }
+  .admin-box-title {
+    font-size: 1.2rem;
+    margin-bottom: 1rem;
+  }
+  .admin-table th, 
+  .admin-table td {
+    padding: 0.75rem 0.4rem;
+    font-size: 0.85rem;
+  }
+  .admin-btn-sm {
+    padding: 0.25rem 0.45rem;
+    font-size: 0.75rem;
+    margin-left: 0.2rem;
+  }
+  .admin-log-wrapper {
+    min-height: 200px;
+    max-height: 250px;
+    padding: 0.75rem;
+    font-size: 0.8rem;
+  }
+
+  /* ---- LISÄTTY: YHTENÄISET INPUT-KENTÄT JOKA SIVULLE MOBIILISSA ---- */
+  .field-group input,
+  .auth-form input,
+  .profile-container input,
+  .answer-input,
+  #admin-search {
+    box-sizing: border-box;       /* Pakotetaan selain laskemaan reunukset oikein */
+    height: 42px;                  /* Pakotetaan TÄSMÄLLEEN sama korkeus joka sivun kentälle */
+    padding: 10px 14px;            /* Yhtenäinen sisäreunustila tekstille */
+    font-size: 14px;               /* Estetään iOS-laitteita zoomaamasta kenttään automaattisesti */
+    line-height: 1.2;
+    margin: 0;
   }
 }
