@@ -1162,6 +1162,126 @@ body {
 }
 
 /* ============================================================
+    PROFIILIN MUOKKAUS SIVU
+   ============================================================ */
+
+/* Keskittää profiilikortin samalla tavalla kuin pelialueen */
+.profile-layout {
+  grid-template-columns: 1fr;
+  max-width: 600px;
+  margin: 40px auto;
+}
+
+/* Otsikkoalue, joka on nyt kortin ulkopuolella yläpuolella */
+.profile-hero-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  margin-bottom: 32px;
+  gap: 12px;
+}
+
+/* Iso hehkuva ääriviivakanji keskelle, täsmää täysin aloitussivun tyyliin */
+.profile-kanji-display {
+  font-family: var(--font-display);
+  font-size: 84px;
+  font-weight: 800;
+  color: transparent;
+  -webkit-text-stroke: 2px var(--red);
+  line-height: 1;
+  filter: drop-shadow(0 0 20px var(--red-glow));
+  user-select: none;
+}
+
+.profile-title {
+  font-family: var(--font-display);
+  font-size: 36px;
+  font-weight: 800;
+  color: var(--white);
+  letter-spacing: 0.05em;
+  line-height: 1.2;
+}
+
+.profile-subtitle {
+  font-size: 14px;
+  color: var(--muted);
+  letter-spacing: 0.06em;
+}
+
+/* Lasimainen kontti lomakkeille */
+.profile-container {
+  background: rgba(253, 250, 245, 0.04);
+  border: 1px solid rgba(184, 146, 10, 0.18);
+  border-radius: var(--radius-lg);
+  padding: 36px;
+  box-shadow: var(--shadow-lg);
+}
+
+/* Välilehdet */
+.profile-tabs {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 28px;
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 10px;
+  padding: 4px;
+}
+
+/* Erityisväri tilin poistovälilehdelle */
+.profile-tabs .danger-tab:hover {
+  color: #ff6b6b;
+}
+.profile-tabs .danger-tab.active {
+  background: var(--wrong);
+  color: var(--white);
+}
+
+/* Lomakkeiden piilotus/näyttö */
+.profile-form {
+  display: none;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.profile-form.active {
+  display: flex;
+  animation: fadeInView 0.25s ease forwards;
+}
+
+/* Tilin poiston varoituslaatikko */
+.delete-warning {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  background: rgba(192, 57, 43, 0.1);
+  border: 1px solid rgba(192, 57, 43, 0.25);
+  border-radius: var(--radius);
+  padding: 16px;
+  color: #e87058;
+  font-size: 14px;
+}
+
+.delete-warning .warning-icon {
+  font-size: 28px;
+  line-height: 1;
+}
+
+/* Punainen korostusnappi tilin poistamiseen */
+.btn-danger-action {
+  background: var(--wrong);
+}
+.btn-danger-action:hover {
+  background: #a9271a;
+}
+
+/* Korjaus silmäikonille */
+.profile-form .pw-toggle {
+  font-style: normal;
+}
+
+
+/* ============================================================
    RESPONSIIVISUUS
    ============================================================ */
 

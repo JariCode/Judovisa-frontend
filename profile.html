@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Judovisa · Profiili</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght=400;600;800&family=Noto+Sans+JP:wght=300;400;500&family=Zen+Kaku+Gothic+New:wght=300;400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <div class="bg-layer">
+    <div class="bg-kanji" aria-hidden="true">柔</div>
+    <div class="bg-circle c1"></div>
+    <div class="bg-circle c2"></div>
+  </div>
+
+  <header class="game-header">
+    <div class="header-logo">
+      <span class="logo-kanji-sm">柔</span>
+      <span class="header-title">JUDOVISA</span>
+    </div>
+    <div class="header-user">
+      <span id="header-username"></span>
+      <span class="user-badge" id="header-role"></span>
+    </div>
+    <div class="header-actions">
+      <button class="btn-icon" id="btn-game" title="Peli" type="button">🧠</button>
+      <button class="btn-icon" id="btn-admin" title="Admin" type="button" style="display:none">★</button>
+      <button class="btn-icon danger" id="btn-logout" title="Kirjaudu ulos" type="button">⏻</button>
+    </div>
+  </header>
+
+  <div class="game-layout profile-layout">
+    <main class="game-main">
+      
+      <div class="profile-hero-header">
+        <div class="profile-kanji-display">道</div>
+        <h1 class="profile-title">Profiili</h1>
+        <p class="profile-subtitle">個人情報 · Muokkaa käyttäjätiliäsi</p>
+      </div>
+      
+      <div class="profile-container" id="view-profile">
+
+        <div class="profile-tabs">
+          <button class="tab-btn active" data-ptab="edit" type="button">Muokkaa tietoja</button>
+          <button class="tab-btn" data-ptab="password" type="button">Vaihda salasana</button>
+          <button class="tab-btn danger-tab" data-ptab="delete" type="button">Poista tili</button>
+        </div>
+
+        <form id="form-profile-edit" class="profile-form active" novalidate>
+          <div class="field-group">
+            <label for="edit-username">Uusi käyttäjätunnus</label>
+            <input type="text" id="edit-username" placeholder="Käyttäjätunnus">
+          </div>
+          <div class="auth-message" id="profile-edit-message"></div>
+          <button type="submit" class="btn-primary">Tallenna muutokset</button>
+        </form>
+
+        <form id="form-change-password" class="profile-form" novalidate>
+          <div class="field-group">
+            <label for="pw-current">Nykyinen salasana</label>
+            <div class="pw-wrap">
+              <input type="password" id="pw-current" placeholder="••••••••">
+              <button type="button" class="pw-toggle" onclick="togglePassword('pw-current')" aria-label="Näytä/piilota salasana">👁</button>
+            </div>
+          </div>
+          <div class="field-group">
+            <label for="pw-new">Uusi salasana</label>
+            <div class="pw-wrap">
+              <input type="password" id="pw-new" placeholder="••••••••">
+              <button type="button" class="pw-toggle" onclick="togglePassword('pw-new')" aria-label="Näytä/piilota salasana">👁</button>
+            </div>
+          </div>
+          <div class="field-group">
+            <label for="pw-new2">Vahvista uusi salasana</label>
+            <div class="pw-wrap">
+              <input type="password" id="pw-new2" placeholder="••••••••">
+              <button type="button" class="pw-toggle" onclick="togglePassword('pw-new2')" aria-label="Näytä/piilota salasana">👁</button>
+            </div>
+          </div>
+          <div class="auth-message" id="profile-pw-message"></div>
+          <button type="submit" class="btn-primary">Vaihda salasana</button>
+        </form>
+
+        <div id="form-delete-account" class="profile-form">
+          <div class="delete-warning">
+            <span class="warning-icon">⚠</span>
+            <p>Tilin poistaminen on pysyvää. Kaikki tietosi ja pelituloksesi poistetaan lopullisesti, eikä tätä toimintoa voi peruuttaa.</p>
+          </div>
+          <div class="field-group">
+            <label for="delete-confirm-pw">Vahvista salasanalla</label>
+            <div class="pw-wrap">
+              <input type="password" id="delete-confirm-pw" placeholder="••••••••">
+              <button type="button" class="pw-toggle" onclick="togglePassword('delete-confirm-pw')" aria-label="Näytä/piilota salasana">👁</button>
+            </div>
+          </div>
+          <div class="auth-message" id="profile-delete-message"></div>
+          <button type="button" class="btn-primary btn-danger-action" id="btn-confirm-delete">Poista tili pysyvästi</button>
+        </div>
+      </div>
+
+    </main>
+  </div>
+  
+  <script src="js/api.js"></script>
+  <script src="js/profile.js"></script>
+</body>
+</html>
