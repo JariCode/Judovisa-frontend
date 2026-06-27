@@ -16,6 +16,7 @@ async function initUser() {
 
   // Jos ei kirjautunut, ohjaa etusivulle
   if (!res.ok || !res.success) {
+    sessionStorage.removeItem('quiz_state');
     window.location.href = 'index.html';
     return;
   }
@@ -39,10 +40,15 @@ async function initUser() {
   // Lataa sivupalkin tiedot heti
   loadLeaderboard();
   loadMyScores();
+
+  // Palauta visan tila jos se on tallennettu
+  loadStateFromSession();
 }
 
 // ---- Uloskirjautuminen ----
 document.getElementById('btn-logout').addEventListener('click', async () => {
+  // Tyhjennä visan tila
+  sessionStorage.removeItem('quiz_state');
   // Kutsu backendin logout-reittiä joka poistaa evästeen
   await api.auth.logout();
   // Ohjaa takaisin etusivulle
@@ -77,6 +83,63 @@ let state = {
   running: false,         // onko peli käynnissä
   checking: false,        // estetään tuplalähetys API-kutsun aikana
 };
+
+// Tallenna tila istuntoon
+function saveStateToSession() {
+  if (state.running) {
+    const stateToSave = { ...state, correctGiven: Array.from(state.correctGiven) };
+    sessionStorage.setItem('quiz_state', JSON.stringify(stateToSave));
+  } else {
+    sessionStorage.removeItem('quiz_state');
+  }
+}
+
+// Palauta tila istunnosta
+function loadStateFromSession() {
+  try {
+    const saved = sessionStorage.getItem('quiz_state');
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      
+      // Varmistetaan, että tallennetussa tilassa on kysymyksiä ja peli oli käynnissä
+      if (parsed.running && parsed.questions && parsed.questions.length > 0) {
+        state = { ...parsed, correctGiven: new Set(parsed.correctGiven) };
+        state.checking = false; // Varmistetaan ettei jää jumiin lataustilaan
+        
+        const q = getQ();
+        if (q) {
+          showScreen('screen-question');
+          document.getElementById('q-category').textContent = `${q.jpName || ''} · ${q.category}`;
+          document.getElementById('q-text').textContent = q.questionText;
+          document.getElementById('answer-input').value = '';
+          document.getElementById('feedback-area').innerHTML = '';
+          document.getElementById('given-answers').innerHTML = '';
+          document.getElementById('given-title').textContent = '';
+          
+          // Piirretään sirut turvallisesti ilman looppiriskiä
+          if (Array.isArray(state.givenAnswers)) {
+            state.givenAnswers.forEach(ans => {
+              addAnswerChip(ans.text, ans.type);
+            });
+          }
+          
+          renderAttemptDots();
+          updateProgress();
+          
+          setTimeout(() => {
+            const input = document.getElementById('answer-input');
+            if (input) input.focus();
+          }, 50);
+        } else {
+          endGame();
+        }
+      }
+    }
+  } catch (e) {
+    console.error('Tilan palautus epäonnistui', e);
+    sessionStorage.removeItem('quiz_state');
+  }
+}
 
 // ============================================================
 // APUFUNKTIOT
@@ -160,6 +223,7 @@ async function startGame() {
       running: true,
       checking: false,
     };
+    saveStateToSession();
 
     // Siirry kysymysnäyttöön ja lataa ensimmäinen kysymys
     showScreen('screen-question');
@@ -188,6 +252,7 @@ function loadQuestion() {
   state.givenAnswers = [];
   state.correctGiven = new Set();
   state.checking = false;
+  saveStateToSession();
 
   // Päivitä kysymyksen tiedot näkyviin
   document.getElementById('q-category').textContent = `${q.jpName || ''} · ${q.category}`;
@@ -280,6 +345,7 @@ async function checkAnswer() {
     showFeedback('Olet jo antanut tämän vastauksen', 'same');
     addAnswerChip(raw, 'same');
     state.givenAnswers.push({ text: raw, type: 'same' });
+    saveStateToSession();
     input.value = '';
     input.classList.add('shake');
     setTimeout(() => input.classList.remove('shake'), 400);
@@ -311,6 +377,7 @@ async function checkAnswer() {
       state.totalCorrect++;
       addAnswerChip(raw, 'correct');
       state.givenAnswers.push({ text: raw, type: 'correct' });
+      saveStateToSession();
       input.value = '';
       renderAttemptDots();
 
@@ -332,6 +399,7 @@ async function checkAnswer() {
       showFeedback('Väärä vastaus, yritä uudelleen', 'wrong');
       addAnswerChip(raw, 'wrong');
       state.givenAnswers.push({ text: raw, type: 'wrong' });
+      saveStateToSession();
       input.value = '';
       input.classList.add('shake');
       setTimeout(() => input.classList.remove('shake'), 400);
@@ -369,6 +437,7 @@ function nextQuestion(skipped) {
 
   // Siirry seuraavaan
   state.currentIndex++;
+  saveStateToSession();
 
   // Jos kysymykset loppuivat, päätä peli
   if (state.currentIndex >= state.questions.length) {
@@ -388,6 +457,7 @@ function skipQuestion() {
 async function endGame() {
   // Merkitse peli päättyneeksi
   state.running = false;
+  sessionStorage.removeItem('quiz_state');
 
   // Näytä tulosnäyttö
   showScreen('screen-results');
