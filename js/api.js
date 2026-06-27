@@ -77,6 +77,21 @@ const api = {
     // Poista tili
     deleteAccount: (password) =>
       apiRequest('/profile/delete-account', { method: 'DELETE', body: { password } }),
+  },
+  //Admin kutsut
+  admin: {
+    // Hae kaikki dojon käyttäjät järjestelmään
+    getUsers: () =>
+      apiRequest('/admin/users', { method: 'GET' }),
+    // Vaihda valitun käyttäjän roolia (player <-> admin)
+    toggleRole: (userId) =>
+      apiRequest(`/admin/users/${userId}/toggle-role`, { method: 'PUT' }),
+    // Poista valitun käyttäjän tili ja tulokset pysyvästi
+    deleteUser: (userId) =>
+      apiRequest(`/admin/users/${userId}`, { method: 'DELETE' }),
+    // LISÄTTY: Hae kaikki järjestelmälokit kannasta
+    getLogs: () =>
+      apiRequest('/admin/logs', { method: 'GET' })
   }
 };
 

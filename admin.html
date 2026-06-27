@@ -1,11 +1,98 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fi">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Judovisa Admin</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Judovisa · Dojo Hallinta</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght=400;600;800&family=Noto+Sans+JP:wght=300;400;500&family=Zen+Kaku+Gothic+New:wght=300;400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-    
+
+  <div class="bg-layer">
+    <div class="bg-kanji" aria-hidden="true">柔</div>
+    <div class="bg-circle c1"></div>
+    <div class="bg-circle c2"></div>
+  </div>
+
+  <header class="game-header">
+    <div class="header-logo">
+      <span class="logo-kanji-sm">柔</span>
+      <span class="header-title">JUDOVISA</span>
+    </div>
+    <div class="header-user">
+      <span id="header-username"></span>
+      <span class="user-badge" id="header-role"></span>
+    </div>
+    <div class="header-actions">
+      <button class="btn-icon" id="btn-game" title="Peli" type="button">🧠</button>
+      <button class="btn-icon" id="btn-profile" title="Profiili" type="button">👤</button>
+      <button class="btn-icon danger" id="btn-logout" title="Kirjaudu ulos" type="button">⏻</button>
+    </div>
+  </header>
+
+  <div class="game-layout admin-page-layout">
+    <main class="game-main">
+      
+      <div class="profile-hero-header">
+        <div class="profile-kanji-display">統</div>
+        <h1 class="profile-title">Dojo Hallinta</h1>
+        <p class="profile-subtitle">管理画面 · Järjestelmänvalvojan työkalut</p>
+      </div>
+
+      <div class="profile-container admin-container">
+        
+        <div class="admin-grid">
+          
+          <div class="admin-column">
+            <h2 class="admin-box-title">
+              <span>Käyttäjät</span>
+              <span id="user-count" class="user-badge player">0</span>
+            </h2>
+            
+            <div class="field-group">
+              <input type="text" id="admin-search" placeholder="Etsi käyttäjätunnuksella..." autocomplete="off">
+            </div>
+
+            <div class="admin-table-wrapper">
+              <table class="admin-table">
+                <thead>
+                  <tr>
+                    <th>Käyttäjä</th>
+                    <th>Rooli</th>
+                    <th class="text-right">Toiminnot</th>
+                  </tr>
+                </thead>
+                <tbody id="admin-users-tbody">
+                  <tr>
+                    <td colspan="3" class="table-loading">Ladataan dojon jäseniä...</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div class="auth-message text-center" id="admin-user-message"></div>
+          </div>
+
+          <div class="admin-column">
+            <h2 class="admin-box-title">
+              <span>Tapahtumaloki</span>
+              <button class="admin-clear-btn" id="btn-clear-logs" type="button">Tyhjennä</button>
+            </h2>
+
+            <div class="admin-log-wrapper">
+              <div id="admin-log-output">
+                <span class="log-row info">[Järjestelmä] Alustetaan lokilukijaa...</span>
+              </div>
+            </div>
+          </div>
+
+        </div> </div> </main>
+  </div>
+
+  <script src="js/api.js"></script>
+  <script src="js/admin.js"></script>
 </body>
 </html>

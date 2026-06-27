@@ -1280,6 +1280,167 @@ body {
   font-style: normal;
 }
 
+/* ============================================================
+   DOJO HALLINTASIVUN (ADMIN) TYYLIT - LOPULLINEN VERSIO
+   ============================================================ */
+
+/* Levennetään asettelua hieman profiilisivusta, jotta kaksi palstaa mahtuu rinnakkain */
+.admin-page-layout {
+  grid-template-columns: 1fr;
+  max-width: 1000px; /* Sopiva leveys kahdelle laatikolle rinnakkain */
+  margin: 40px auto;
+}
+
+/* Kaksipalstainen gridi lasikontin sisällä */
+.admin-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 2.5rem;
+  width: 100%;
+}
+
+/* Yksittäinen sarake */
+.admin-column {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Otsikot palstojen sisällä */
+.admin-box-title {
+  font-family: var(--font-display);
+  font-size: 1.3rem;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  margin-bottom: 1.5rem;
+  color: var(--white);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  text-align: left;
+}
+
+/* Taulukon kääre ja siisti dojo-skrollaus */
+.admin-table-wrapper {
+  overflow-x: auto;
+  max-height: 280px;
+  margin-top: 0.5rem;
+  border-radius: 6px;
+}
+
+/* Taulukkoasetukset */
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.admin-table th {
+  padding: 0.8rem 0.5rem;
+  color: var(--muted);
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  border-bottom: 1px solid rgba(184, 146, 10, 0.15);
+}
+
+.admin-table td {
+  padding: 0.8rem 0.5rem;
+  color: var(--white);
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  vertical-align: middle;
+}
+
+.table-loading {
+  text-align: center;
+  color: var(--muted) !important;
+  padding: 2rem 0 !important;
+}
+
+/* Järjestelmälokin musta konsoliosa */
+.admin-log-wrapper {
+  flex-grow: 1;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: var(--radius);
+  border: 1px solid rgba(184, 146, 10, 0.15);
+  padding: 1rem;
+  min-height: 250px;
+  max-height: 280px;
+  overflow-y: auto;
+  font-family: monospace;
+  font-size: 0.85rem;
+  text-align: left;
+  box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.4);
+}
+
+.log-row {
+  display: block;
+  padding: 0.15rem 0;
+  line-height: 1.4;
+}
+
+.log-row.info { color: var(--muted); }
+.log-row.success { color: #5aad78; }
+.log-row.warning { color: #c8a835; }
+.log-row.danger { color: #e87058; }
+
+/* Ammattimaiset, dojo-henkiset painikkeet taulukon riveihin */
+.admin-btn-sm {
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--parchment);
+  border: 1px solid rgba(184, 146, 10, 0.2);
+  padding: 0.3rem 0.6rem;
+  font-size: 0.8rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-family: var(--font-body);
+  transition: all var(--transition);
+  margin-left: 0.3rem;
+}
+
+.admin-btn-sm:hover {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: var(--gold);
+  color: var(--white);
+}
+
+.admin-btn-sm.role-toggle { color: #c8a835; }
+.admin-btn-sm.role-toggle:hover { background: rgba(138, 104, 0, 0.1); }
+
+.admin-btn-sm.user-delete { color: #e87058; border-color: rgba(192, 57, 43, 0.3); }
+.admin-btn-sm.user-delete:hover { background: rgba(192, 57, 43, 0.15); border-color: var(--red); }
+
+/* Tyhjennä-painike lokin yläreunassa */
+.admin-clear-btn {
+  background: transparent;
+  color: var(--muted);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 0.25rem 0.65rem;
+  font-size: 0.75rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-family: var(--font-body);
+  transition: all var(--transition);
+}
+
+.admin-clear-btn:hover {
+  border-color: var(--muted);
+  color: var(--white);
+}
+
+/* Skrollipalkkien tyylit yhtenäisiksi */
+.admin-table-wrapper::-webkit-scrollbar,
+.admin-log-wrapper::-webkit-scrollbar {
+  width: 4px;
+}
+.admin-table-wrapper::-webkit-scrollbar-thumb,
+.admin-log-wrapper::-webkit-scrollbar-thumb {
+  background: rgba(184, 146, 10, 0.2);
+  border-radius: 2px;
+}
 
 /* ============================================================
    RESPONSIIVISUUS
