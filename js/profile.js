@@ -4,6 +4,9 @@
 // Tallenna kirjautunut käyttäjä myöhempää käyttöä varten
 let currentUser = null;
 
+// Globaali muuttuja tilin poiston kaksivaiheiselle tekstivarmistukselle
+let deleteConfirmedOnce = false;
+
 // ============================================================
 // KÄYTTÄJÄ JA YLÄPALKKI (Täsmälleen sama logiikka kuin game.js)
 // ============================================================
@@ -74,12 +77,22 @@ function clearMessages() {
   document.getElementById('profile-edit-message').textContent = '';
   document.getElementById('profile-pw-message').textContent = '';
   document.getElementById('profile-delete-message').textContent = '';
+  
+  // Nollataan poistotila ja palautetaan painikkeen teksti perustilaan
+  deleteConfirmedOnce = false;
+  document.getElementById('btn-confirm-delete').textContent = 'Poista tili pysyvästi';
 }
 
 function showProfileMessage(elementId, text, type) {
   const el = document.getElementById(elementId);
   el.textContent = text;
   el.className = 'auth-message ' + type;
+
+  // TURVANOLLEUS: Jos viesti tulostuu muualle kuin poistolomakkeelle, nollataan poistovarmistus
+  if (elementId !== 'profile-delete-message') {
+    deleteConfirmedOnce = false;
+    document.getElementById('btn-confirm-delete').textContent = 'Poista tili pysyvästi';
+  }
 }
 
 // ============================================================
@@ -162,15 +175,22 @@ document.getElementById('form-change-password').addEventListener('submit', async
 // ============================================================
 // 3. TILIN POISTAMINEN (Kaksivaiheinen tekstivarmistus)
 // ============================================================
-
-// Muuttuja, joka muistaa onko varoitusta vielä näytetty
-let deleteConfirmedOnce = false;
-
 document.getElementById('btn-confirm-delete').addEventListener('click', async () => {
   const password = document.getElementById('delete-confirm-pw').value;
   const deleteBtn = document.getElementById('btn-confirm-delete');
 
-  // 1. Tarkistetaan ensin, että salasana on kirjoitettu kenttään
+  // 1. TURVALLISUUSTARKISTUS FRONTISSA: Estetään adminia poistamasta itseään lennosta
+  if (currentUser && currentUser.role === 'admin') {
+    showProfileMessage(
+      'profile-delete-message',
+      'Estetty: Järjestelmänvalvojana (Admin) et voi poistaa omaa tiliäsi.',
+      'error'
+    );
+    deleteBtn.disabled = true; // Lukitaan painike kokonaan
+    return;
+  }
+
+  // 2. Tarkistetaan ensin, että salasana on kirjoitettu kenttään
   if (!password) {
     showProfileMessage('profile-delete-message', 'Syötä salasanasi vahvistaaksesi poiston', 'error');
     deleteConfirmedOnce = false;
@@ -178,11 +198,11 @@ document.getElementById('btn-confirm-delete').addEventListener('click', async ()
     return;
   }
 
-  // 2. ENSIMMÄINEN KLIKKAUS: Näytetään varoitusteksti ja muutetaan napin sisältö
+  // 3. ENSIMMÄINEN KLIKKAUS: Näytetään varoitusteksti ja muutetaan napin sisältö
   if (!deleteConfirmedOnce) {
     showProfileMessage(
-      'profile-delete-message', 
-      'Oletko varma? Tämä toiminto poistaa tilisi ja kaikki pelituloksesi pysyvästi.', 
+      'profile-delete-message',
+      'Oletko varma? Tämä toiminto poistaa tilisi ja kaikki pelituloksesi pysyvästi.',
       'error'
     );
     deleteConfirmedOnce = true;
@@ -190,27 +210,23 @@ document.getElementById('btn-confirm-delete').addEventListener('click', async ()
     return;
   }
 
-  // 3. TOINEN KLIKKAUS: Suoritetaan varsinainen poisto backendissä
+  // 4. TOINEN KLIKKAUS: Suoritetaan varsinainen poisto backendissä
   const res = await api.profile.deleteAccount(password);
 
   if (res.success) {
-    // Näytetään onnistumisteksti suoraan viestikentässä
     showProfileMessage('profile-delete-message', 'Tili poistettu onnistuneesti. Ohjataan aloitussivulle...', 'success');
-    
-    // Tyhjennetään pelin tila istunnosta
     sessionStorage.removeItem('quiz_state');
     
-    // Ohjataan käyttäjä ulos pienen viiveen jälkeen
     setTimeout(() => {
       window.location.href = 'index.html';
     }, 1500);
   } else {
-    // Jos salasana oli väärin, näytetään virhe ja nollataan napin tila
     showProfileMessage('profile-delete-message', res.message || 'Tilin poisto epäonnistui', 'error');
     deleteConfirmedOnce = false;
     deleteBtn.textContent = 'Poista tili pysyvästi';
   }
 });
+
 // ============================================================
 // NAVIGOINTI YLÄPALKKI
 // ============================================================
