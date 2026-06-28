@@ -109,14 +109,13 @@ function loadStateFromSession() {
         const q = getQ();
         if (q) {
           showScreen('screen-question');
-          document.getElementById('q-category').textContent = `${q.jpName || ''} · ${q.category}`;
-          document.getElementById('q-text').textContent = q.questionText;
-          document.getElementById('answer-input').value = '';
-          document.getElementById('feedback-area').innerHTML = '';
-          document.getElementById('given-answers').innerHTML = '';
-          document.getElementById('given-title').textContent = '';
           
-          // Piirretään sirut turvallisesti ilman looppiriskiä
+          // KORJATTU: Kutsutaan loadQuestion()-funktiota lennosta myös palautuksessa.
+          // Tämä ajaa options-tarkistuksen, piilottaa/näyttää oikeat kentät ja piirtää radiopainikkeet.
+          loadQuestion();
+          
+          // Palautetaan aiemmin annetut vastaukset takaisin näkyviin siruina
+          document.getElementById('given-answers').innerHTML = '';
           if (Array.isArray(state.givenAnswers)) {
             state.givenAnswers.forEach(ans => {
               addAnswerChip(ans.text, ans.type);
@@ -128,7 +127,11 @@ function loadStateFromSession() {
           
           setTimeout(() => {
             const input = document.getElementById('answer-input');
-            if (input) input.focus();
+            if (input && q.options && q.options.length > 0) {
+              // Monivalinnassa ei viedä fokusta tekstikenttään
+            } else if (input) {
+              input.focus();
+            }
           }, 50);
         } else {
           endGame();
@@ -262,8 +265,61 @@ function loadQuestion() {
   document.getElementById('given-answers').innerHTML = '';
   document.getElementById('given-title').textContent = '';
 
-  // Aseta fokus syötekenttään
-  document.getElementById('answer-input').focus();
+  // HAETAAN VALINNAT JA VASTATTAVAT ALUEET LENNOSTA
+  const textWrap = document.getElementById('text-answer-wrap');
+  const choicesWrap = document.getElementById('choices-answer-wrap');
+  const choicesList = document.getElementById('choices-list');
+
+  // LISÄTTY: Monivalintalogiikan ohjaus (KORJATTU: Tarkistetaan turvallisesti onko options taulukko olemassa)
+  if (q.options && Array.isArray(q.options) && q.options.length > 0) {
+    // 1. Kyseessä on monivalinta: vaihdetaan näkymät
+    if (textWrap) textWrap.style.display = 'none';
+    if (choicesWrap) choicesWrap.style.display = 'block';
+    if (choicesList) {
+      choicesList.innerHTML = '';
+
+      // UUSI LISÄYS: Sekoitetaan vaihtoehtojen järjestys lennosta, jotta oikea vastaus ei ole aina samassa kohdassa!
+      const shuffledOptions = shuffle(q.options);
+
+      // 2. Luodaan semanttiset radiopainikkeet sekoitetusta listasta
+      shuffledOptions.forEach((option, index) => {
+        const label = document.createElement('label');
+        label.className = 'choice-item'; // Asettaa luokan laatikolle
+        
+        const radio = document.createElement('input');
+        radio.type = 'radio';
+        radio.name = 'judo-choice';
+        radio.className = 'choice-radio'; // Asettaa luokan pallolle
+        radio.value = option;
+        
+        // Kun radiopainiketta klikataan, se hyödyntää suoraan checkAnswer()-logiikkaa
+        radio.addEventListener('change', () => {
+          if (state.attemptsLeft > 0 && !state.checking) {
+            // Asetetaan valittu arvo piilotettuun tekstikenttään, jotta checkAnswer lukee sen
+            document.getElementById('answer-input').value = option;
+            checkAnswer();
+            
+            // Jos yritysmäärä kantaobjektissa on 1, lukitaan valinnat välittömästi painalluksen jälkeen
+            if (q.attempts === 1) {
+              document.querySelectorAll('input[name="judo-choice"]').forEach(input => input.disabled = true);
+            }
+          }
+        });
+
+        label.appendChild(radio);
+        label.appendChild(document.createTextNode(` ${option}`));
+        choicesList.appendChild(label);
+      });
+    }
+  } else {
+    // Perinteinen tekstikysymys: palautetaan normaali asettelu ja piilotetaan monivalinta
+    if (textWrap) textWrap.style.display = 'flex';
+    if (choicesWrap) choicesWrap.style.display = 'none';
+    
+    // Asetetaanko fokus syötekenttään vain tekstikysymyksessä
+    const inputField = document.getElementById('answer-input');
+    if (inputField) inputField.focus();
+  }
 
   // Päivitä mittarit
   renderAttemptDots();
@@ -370,6 +426,9 @@ async function checkAnswer() {
       return;
     }
 
+    // LISÄTTY: Tarkistetaan onko kyseessä monivalintakysymys (löytyy options-kenttä)
+    const isMultipleChoice = q.options && q.options.length > 0;
+
     if (res.correct) {
       // Oikea vastaus: kuluttaa yrityksen ja antaa pisteen
       state.correctGiven.add(normalized);
@@ -382,7 +441,11 @@ async function checkAnswer() {
       renderAttemptDots();
 
       // Kaikki vaaditut annettu tai yritykset loppu
-      if (state.correctGiven.size >= q.attempts) {
+      if (isMultipleChoice) {
+        // Räätälöity siisti viesti monivalinnalle
+        showFeedback('Oikein!', 'correct');
+        setTimeout(() => nextQuestion(false), 1000);
+      } else if (state.correctGiven.size >= q.attempts) {
         showFeedback(`Erinomainen, kaikki ${q.attempts} oikein`, 'correct');
         setTimeout(() => nextQuestion(false), 1000);
       } else if (state.attemptsLeft <= 0) {
@@ -396,17 +459,25 @@ async function checkAnswer() {
       state.attemptsLeft--;
       state.totalWrong++;
       renderAttemptDots();
-      showFeedback('Väärä vastaus, yritä uudelleen', 'wrong');
+      
       addAnswerChip(raw, 'wrong');
       state.givenAnswers.push({ text: raw, type: 'wrong' });
       saveStateToSession();
       input.value = '';
       input.classList.add('shake');
       setTimeout(() => input.classList.remove('shake'), 400);
-      // Jos yritykset loppuivat, siirry seuraavaan
-      if (state.attemptsLeft <= 0) {
-        showFeedback('Väärä vastaus, yritykset loppuivat', 'wrong');
+
+      if (isMultipleChoice) {
+        // Räätälöity siisti viesti monivalinnalle
+        showFeedback('Väärin!', 'wrong');
         setTimeout(() => nextQuestion(false), 1000);
+      } else {
+        showFeedback('Väärä vastaus, yritä uudelleen', 'wrong');
+        // Jos yritykset loppuivat perinteisessä kysymyksessä
+        if (state.attemptsLeft <= 0) {
+          showFeedback('Väärä vastaus, yritykset loppuivat', 'wrong');
+          setTimeout(() => nextQuestion(false), 1000);
+        }
       }
     }
   } catch (error) {

@@ -95,7 +95,8 @@
 
           <!-- Vastausalue: syöte ja tarkistuspainike -->
           <div class="answer-area">
-            <div class="answer-input-wrap">
+            
+            <div class="answer-input-wrap" id="text-answer-wrap">
               <input type="text"
                      id="answer-input"
                      class="answer-input"
@@ -108,11 +109,16 @@
                 <span class="btn-sub">Tarkista</span>
               </button>
             </div>
-            <!-- Palauteviestialue -->
+
+            <fieldset id="choices-answer-wrap" class="choices-fieldset">
+              <legend class="sr-only">Valitse oikea vaihtoehto</legend>
+              <div id="choices-list" class="choices-list">
+                </div>
+            </fieldset>
+
             <div class="feedback-area" id="feedback-area"></div>
           </div>
 
-          <!-- Annetut vastaukset siruina -->
           <div class="given-answers-wrap">
             <div class="given-answers-title" id="given-title"></div>
             <div class="given-answers-list" id="given-answers"></div>

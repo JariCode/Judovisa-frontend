@@ -863,6 +863,112 @@ body {
 .btn-skip:hover { color: var(--gold); }
 
 /* ============================================================
+   MONIVALINTAKYSYMYSTEN DOJO-TYYLIT
+   ============================================================ */
+
+/* Poistetaan selaimen oletusreunukset ja viivat fieldset-elementistä */
+.answer-area .choices-fieldset {
+  border: none;
+  padding: 0;
+  margin: 16px 0 0 0;
+  min-width: 0;
+  width: 100%;
+}
+
+/* Piilotetaan "Valitse oikea vaihtoehto" -legend-otsikko ruudunlukijoille saavutettavasti */
+.answer-area .sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Monivalintavaihtoehtojen pystyrivi */
+.choices-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+}
+
+/* Yksittäinen laatikko, joka sisältää valinnan */
+.choice-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(184, 146, 10, 0.2);
+  border-radius: 10px;
+  padding: 14px 18px;
+  font-family: var(--font-body);
+  font-size: 15px;
+  color: var(--white);
+  cursor: pointer;
+  transition: all var(--transition);
+  user-select: none;
+}
+
+/* Vaihtoehtolaatikon hover-efekti */
+.choice-item:hover {
+  background: rgba(255, 255, 255, 0.09);
+  border-color: var(--gold);
+}
+
+/* Tyylitellään itse pallo vähän arvokkaammaksi */
+.choice-radio {
+  appearance: none; /* piipotetaan selaimen oletuspallo */
+  -webkit-appearance: none;
+  width: 18px;
+  height: 18px;
+  border: 2px solid var(--muted);
+  border-radius: 50%;
+  outline: none;
+  background: transparent;
+  cursor: pointer;
+  display: inline-grid;
+  place-content: center;
+  transition: var(--transition);
+  flex-shrink: 0; /* Estetään pallon liiskaantuminen kapealla näytöllä */
+}
+
+/* Radiopallon sisäosa (pieni kultainen täplä), joka syttyy valittaessa */
+.choice-radio::before {
+  content: "";
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  transform: scale(0);
+  background-color: var(--gold);
+  transition: transform var(--transition);
+}
+
+/* Kun vaihtoehto on aktiivinen / valittu, muutetaan laatikon reuna */
+.choice-item:has(.choice-radio:checked) {
+  border-color: var(--gold);
+  background: rgba(184, 146, 10, 0.05);
+}
+
+/* Valittu pallo muuttuu kultaiseksi */
+.choice-radio:checked {
+  border-color: var(--gold);
+}
+
+.choice-radio:checked::before {
+  transform: scale(1);
+}
+
+/* Jos valinnat lukitaan (attempts: 1 jälkeen) */
+.choice-radio:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ============================================================
    TULOSNÄYTTÖ
    ============================================================ */
 
@@ -1600,5 +1706,17 @@ body {
     font-size: 14px;               /* Estetään iOS-laitteita zoomaamasta kenttään automaattisesti */
     line-height: 1.2;
     margin: 0;
+  }
+
+  /* ---- LISÄTTY: MONIVALINTALAATIKOIDEN TIIVISTYS MOBIILISSA ---- */
+  .answer-area .choice-item {
+    padding: 10px 14px;      /* Täsmää täysin muiden input-kenttien mobiilipaddingiin */
+    font-size: 14px;         /* Yhtenäinen fonttikoko muiden kenttien kanssa */
+    gap: 10px;               /* Tiivistetään pallon ja tekstin väliä mobiilissa */
+  }
+
+  .answer-area .choice-radio {
+    width: 18px;             /* Hieman sirompi pallo mobiiliruudulle */
+    height: 18px;
   }
 }
