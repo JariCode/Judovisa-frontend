@@ -188,7 +188,7 @@ function renderUserTable(usersList) {
     tr.appendChild(roleTd);
     tr.appendChild(actionsTd);
     tbody.appendChild(tr);
-  });
+    });
 }
 
 // Yhdistetty suodatusfunktio, joka suodattaa sekuntien murto-osassa molemmat näkymät
@@ -364,20 +364,10 @@ if (formAddQuestion) {
     }
 
     try {
-      const token = localStorage.getItem('token') || sessionStorage.getItem('token');
-      
-      const response = await fetch('/api/admin/questions', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify(payload)
-      });
+      // KORJATTU: Käytetään virallista api.js-apuria, joka hoitaa evästeet (cookies) automaattisesti porttiin :5000
+      const result = await api.admin.addQuestion(payload);
 
-      const result = await response.json();
-
-      if (response.ok && result.success) {
+      if (result.success || result.ok) {
         formMsg.textContent = '✅ Kysymys tallennettu onnistuneesti dojo-tietokantaan!';
         formMsg.className = 'auth-message success';
         formAddQuestion.reset();

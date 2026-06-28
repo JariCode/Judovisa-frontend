@@ -15,7 +15,9 @@ async function apiRequest(path, options = {}) {
 
   // Jos mukana runko, muunna se JSON-merkkijonoksi
   if (options.body) {
-    config.body = JSON.stringify(options.body);
+    // KORJAUS: Jos body on jo valmiiksi merkkijonona (string), käytetään sitä. 
+    // Jos se on objekti (kuten kirjautumisessa), muutetaan se JSON-tekstiksi.
+    config.body = typeof options.body === 'string' ? options.body : JSON.stringify(options.body);
   }
 
   try {
@@ -89,9 +91,12 @@ const api = {
     // Poista valitun käyttäjän tili ja tulokset pysyvästi
     deleteUser: (userId) =>
       apiRequest(`/admin/users/${userId}`, { method: 'DELETE' }),
-    // LISÄTTY: Hae kaikki järjestelmälokit kannasta
+    // Hae kaikki järjestelmälokit kannasta
     getLogs: () =>
-      apiRequest('/admin/logs', { method: 'GET' })
+      apiRequest('/admin/logs', { method: 'GET' }),
+    // LISÄTTY: Lähetä uusi kysymys backendille suojatusti
+    addQuestion: (payload) =>
+      apiRequest('/admin/questions', { method: 'POST', body: payload })
   }
 };
 
