@@ -199,8 +199,15 @@ function filterDojoData() {
   const filteredUsers = allUsers.filter(user => user.displayName.toLowerCase().includes(query));
   renderUserTable(filteredUsers);
 
-  // 2. Suodatetaan tapahtumaloki käyttäjänimen perusteella
-  const filteredLogs = allLogs.filter(log => log.username.toLowerCase().includes(query));
+  // 2. Suodatetaan tapahtumaloki (PÄIVITETTY: etsitään sekä tekijää että kuvauksen tekstiä)
+  const filteredLogs = allLogs.filter(log => {
+    const tekijaMatches = log.username.toLowerCase().includes(query);
+    const kuvausMatches = log.details.toLowerCase().includes(query);
+    
+    // Rivi otetaan mukaan, jos nimi löytyy joko tekijästä tai selitteestä
+    return tekijaMatches || kuvausMatches;
+  });
+  
   renderLogTable(filteredLogs);
 }
 
