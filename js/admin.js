@@ -3,6 +3,7 @@
 
 let currentAdmin = null;
 let allUsers = []; // Varastoidaan palvelimelta haetut käyttäjät suodatusta varten
+let allLogs = [];  // LISÄTTY: Varastoidaan palvelimelta haetut lokit suodatusta varten
 
 // Seurataan klikkauksia kaksivaiheista varmistusta varten (tallennetaan käyttäjä-ID:t)
 let roleToggleTargetId = null;
@@ -36,25 +37,38 @@ async function initAdminPage() {
   await fetchDojoUsers();
   await fetchDojoLogs();
 
-  // Otetaan hakukentän kuuntelija käyttöön lennosta
-  document.getElementById('admin-search').addEventListener('input', filterUsers);
+  // Otetaan hakukentän kuuntelija käyttöön lennosta (Päivitetty suodattamaan molemmat)
+  document.getElementById('admin-search').addEventListener('input', filterDojoData);
 }
 
 // ============================================================
 // DATA-ALUSTUS JA TULOSTUS (Käyttäjät ja Oikeat Lokit)
 // ============================================================
 
-// Haetaan aidot lokit suoraan kannasta ja tulostetaan ne värikoodatusti
+// Haetaan aidot lokit suoraan kannasta
 async function fetchDojoLogs() {
   const res = await api.admin.getLogs();
-  const logOutput = document.getElementById('admin-log-output');
   
+  if (res.success && res.logs) {
+    allLogs = res.logs; // Tallennetaan globaaliin muuttujaan suodatusta varten
+    renderLogTable(allLogs);
+  } else {
+    const logOutput = document.getElementById('admin-log-output');
+    if (logOutput) {
+      logOutput.innerHTML = '<span class="log-row danger">[Järjestelmä] Lokien lataus epäonnistui.</span>';
+    }
+  }
+}
+
+// Erotettu lokien piirtäminen omaksi funktioksi, jotta suodatus voi kutsua tätä lennosta
+function renderLogTable(logsList) {
+  const logOutput = document.getElementById('admin-log-output');
   if (!logOutput) return;
 
-  if (res.success && res.logs && res.logs.length > 0) {
-    logOutput.innerHTML = ''; // Tyhjennetään oletusarvoinen alustusviesti
+  if (logsList && logsList.length > 0) {
+    logOutput.innerHTML = ''; // Tyhjennetään vanha sisältö
     
-    res.logs.forEach(log => {
+    logsList.forEach(log => {
       // Määritetään oikea väri luokan (CSS) mukaan tapahtumatyypin perusteella
       let type = 'info';
       const action = log.action;
@@ -100,8 +114,8 @@ async function fetchDojoLogs() {
     // Skrollataan lokilaatikko automaattisesti aivan alareunaan
     const wrapper = logOutput.parentElement;
     wrapper.scrollTop = wrapper.scrollHeight;
-  } else if (res.success && res.logs && res.logs.length === 0) {
-    logOutput.innerHTML = '<span class="log-row info">[Järjestelmä] Tietokanta on tyhjä. Ei aiempia lokitapahtumia.</span>';
+  } else {
+    logOutput.innerHTML = '<span class="log-row info">[Järjestelmä] Ei lokitapahtumia tällä rajauksella.</span>';
   }
 }
 
@@ -177,10 +191,17 @@ function renderUserTable(usersList) {
   });
 }
 
-function filterUsers() {
+// Yhdistetty suodatusfunktio, joka suodattaa sekuntien murto-osassa molemmat näkymät
+function filterDojoData() {
   const query = document.getElementById('admin-search').value.toLowerCase().trim();
-  const filtered = allUsers.filter(user => user.displayName.toLowerCase().includes(query));
-  renderUserTable(filtered);
+  
+  // 1. Suodatetaan käyttäjät
+  const filteredUsers = allUsers.filter(user => user.displayName.toLowerCase().includes(query));
+  renderUserTable(filteredUsers);
+
+  // 2. Suodatetaan tapahtumaloki käyttäjänimen perusteella
+  const filteredLogs = allLogs.filter(log => log.username.toLowerCase().includes(query));
+  renderLogTable(filteredLogs);
 }
 
 // ============================================================
