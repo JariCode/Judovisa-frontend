@@ -88,7 +88,7 @@ function showProfileMessage(elementId, text, type) {
   el.textContent = text;
   el.className = 'auth-message ' + type;
 
-  // TURVANOLLEUS: Jos viesti tulostuu muualle kuin poistolomakkeelle, nollataan poistovarmistus
+  // TURVANOLLAUS: Jos viesti tulostuu muualle kuin poistolomakkeelle, nollataan poistovarmistus
   if (elementId !== 'profile-delete-message') {
     deleteConfirmedOnce = false;
     document.getElementById('btn-confirm-delete').textContent = 'Poista tili pysyvästi';
@@ -129,7 +129,7 @@ document.getElementById('form-profile-edit').addEventListener('submit', async (e
 
   if (res.success) {
     showProfileMessage('profile-edit-message', 'Käyttäjätunnus päivitetty onnistuneesti!', 'success');
-    // Päivitetään heti uusi nimi yläpalkkiin lennosta
+    // Päivitetään heti uusi nimi yläpalkkiin
     document.getElementById('header-username').textContent = res.user.displayName;
   } else {
     showProfileMessage('profile-edit-message', res.message || 'Tunnuksen vaihto epäonnistui', 'error');

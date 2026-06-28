@@ -270,7 +270,7 @@ function loadQuestion() {
   const choicesWrap = document.getElementById('choices-answer-wrap');
   const choicesList = document.getElementById('choices-list');
 
-  // LISÄTTY: Monivalintalogiikan ohjaus (KORJATTU: Tarkistetaan turvallisesti onko options taulukko olemassa)
+  // Tarkistetaan onko options taulukko olemassa
   if (q.options && Array.isArray(q.options) && q.options.length > 0) {
     // 1. Kyseessä on monivalinta: vaihdetaan näkymät
     if (textWrap) textWrap.style.display = 'none';
@@ -278,10 +278,10 @@ function loadQuestion() {
     if (choicesList) {
       choicesList.innerHTML = '';
 
-      // UUSI LISÄYS: Sekoitetaan vaihtoehtojen järjestys lennosta, jotta oikea vastaus ei ole aina samassa kohdassa!
+      // Sekoitetaan vaihtoehtojen järjestys lennosta, jotta oikea vastaus ei ole aina samassa kohdassa!
       const shuffledOptions = shuffle(q.options);
 
-      // 2. Luodaan semanttiset radiopainikkeet sekoitetusta listasta
+      // 2. Luodaan radiopainikkeet sekoitetusta listasta
       shuffledOptions.forEach((option, index) => {
         const label = document.createElement('label');
         label.className = 'choice-item'; // Asettaa luokan laatikolle
@@ -299,7 +299,7 @@ function loadQuestion() {
             document.getElementById('answer-input').value = option;
             checkAnswer();
             
-            // Jos yritysmäärä kantaobjektissa on 1, lukitaan valinnat välittömästi painalluksen jälkeen
+            // Jos yritysmäärä on 1, lukitaan valinnat välittömästi painalluksen jälkeen
             if (q.attempts === 1) {
               document.querySelectorAll('input[name="judo-choice"]').forEach(input => input.disabled = true);
             }
@@ -360,7 +360,7 @@ function showFeedback(text, type) {
   area.appendChild(msg);
 }
 
-// ---- Lisää vastaussiru annettujen vastausten listaan ----
+// ---- Lisää vastaus annettujen vastausten listaan ----
 function addAnswerChip(text, type) {
   const list = document.getElementById('given-answers');
   document.getElementById('given-title').textContent = 'Annetut vastaukset:';
@@ -426,7 +426,7 @@ async function checkAnswer() {
       return;
     }
 
-    // LISÄTTY: Tarkistetaan onko kyseessä monivalintakysymys (löytyy options-kenttä)
+    // Tarkistetaan onko kyseessä monivalintakysymys (löytyy options-kenttä)
     const isMultipleChoice = q.options && q.options.length > 0;
 
     if (res.correct) {
@@ -557,10 +557,10 @@ function renderResults() {
 
   // Valitse kanji ja otsikko prosentin mukaan
   let kanji = '頑';
-  let title = 'Harjoitus tekee mestarin';
-  if (pct >= 90) { kanji = '優'; title = 'Erinomainen'; }
-  else if (pct >= 70) { kanji = '良'; title = 'Hyvä suoritus'; }
-  else if (pct >= 50) { kanji = '可'; title = 'Kohtuullinen'; }
+  let title = 'Harjoitus tekee mestarin!';
+  if (pct >= 90) { kanji = '優'; title = 'Erinomainen suoritus!'; }
+  else if (pct >= 70) { kanji = '良'; title = 'Hyvä suoritus!'; }
+  else if (pct >= 50) { kanji = '可'; title = 'Kohtalainen suoritus!'; }
 
   // Aseta tulosten yläosa
   document.getElementById('results-kanji').textContent = kanji;
@@ -573,7 +573,7 @@ function renderResults() {
   document.getElementById('res-wrong').textContent = state.totalWrong;
   document.getElementById('res-skipped').textContent = state.totalSkipped;
 
-  // Piirrä kategoriakohtaiset tulokset
+  // Piirrä tulokset kategoriakohtaisesti
   const container = document.getElementById('category-results');
   container.innerHTML = '';
   state.sessionScores.forEach((s) => {

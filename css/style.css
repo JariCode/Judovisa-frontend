@@ -402,7 +402,6 @@ body {
   }
 }
 
-
 /* Roolimerkki (pelaaja/admin) */
 .user-badge {
   font-size: 11px;
@@ -446,12 +445,14 @@ body {
   font-size: 16px;
   transition: all var(--transition);
 }
+
 /* Ikonipainikkeen hover */
 .btn-icon:hover {
   background: rgba(255,255,255,0.09);
   color: var(--gold);
   border-color: rgba(184, 146, 10, 0.4);
 }
+
 /* Vaarallisen painikkeen hover (uloskirjautuminen) */
 .btn-icon.danger:hover {
   background: var(--red-glow);
@@ -1462,8 +1463,8 @@ body {
 
 .table-loading {
   text-align: center;
-  color: var(--muted) !important;
-  padding: 2rem 0 !important;
+  color: var(--muted);
+  padding: 2rem 0;
 }
 
 /* Järjestelmälokin musta konsoliosa */
@@ -1489,9 +1490,9 @@ body {
 }
 
 .log-row.info { color: var(--muted); }
-.log-row.success { color: #5aad78; }
-.log-row.warning { color: #c8a835; }
-.log-row.danger { color: #e87058; }
+.log-row.success, .success { color: #5aad78; }
+.log-row.warning, .warning { color: #c8a835; } /* ◄ Nyt pelkkä warning on keltainen! */
+.log-row.danger, .danger, .error { color: #e87058; }   /* ◄ Nyt danger ja error ovat punaisia! */
 
 /* Ammattimaiset, dojo-henkiset painikkeet taulukon riveihin */
 .admin-btn-sm {
@@ -1673,6 +1674,8 @@ body {
   opacity: 0.6;
   cursor: not-allowed;
 }
+
+
 
 /* ============================================================
    RESPONSIIVISUUS

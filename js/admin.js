@@ -107,7 +107,7 @@ function renderLogTable(logsList) {
       const row = document.createElement('span');
       row.className = `log-row ${type}`;
       
-      // SUOMENNOS LENNOSTA: Korvataan englanninkieliset roolit tekstistä ennen tulostusta
+      // SUOMENNOS: Korvataan englanninkieliset roolit tekstistä ennen tulostusta
       let naytettavaDetails = log.details
         .replace('PLAYER', 'PELAAJA')
         .replace('ADMIN', 'ADMIN');
@@ -231,7 +231,7 @@ async function handleRoleToggle(user) {
 
   if (roleToggleTargetId !== user._id) {
     roleToggleTargetId = user._id;
-    showAdminMessage(`Klikkaa uudestaan vahvistaaksesi käyttäjän ${user.displayName} roolin muutos.`, 'success');
+    showAdminMessage(`Klikkaa uudestaan vahvistaaksesi käyttäjän ${user.displayName} roolin muutos.`, 'warning');
     renderUserTable(allUsers);
     return;
   }
@@ -485,14 +485,14 @@ function renderQuestionTable(questionsList) {
     actionsTd.className = 'text-right';
     actionsTd.style.whiteSpace = 'nowrap';
 
-    // Perustetaan Muokkaa-nappi
+    // Muokkaa-nappi
     const editBtn = document.createElement('button');
     editBtn.className = 'admin-btn-sm role-toggle';
     editBtn.style.marginRight = '5px';
     editBtn.textContent = 'Muokkaa';
     editBtn.addEventListener('click', () => startQuestionEdit(q));
 
-    // Perustetaan Poista-nappi kaksivaiheisella varmistuksella
+    // Poista-nappi kaksivaiheisella varmistuksella
     const isDeleteVarmistus = questionDeleteTargetId === q._id;
     const deleteBtn = document.createElement('button');
     deleteBtn.className = 'admin-btn-sm user-delete';

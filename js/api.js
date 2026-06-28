@@ -15,7 +15,7 @@ async function apiRequest(path, options = {}) {
 
   // Jos mukana runko, muunna se JSON-merkkijonoksi
   if (options.body) {
-    // KORJAUS: Jos body on jo valmiiksi merkkijonona (string), käytetään sitä. 
+    // Jos body on jo valmiiksi merkkijonona (string), käytetään sitä. 
     // Jos se on objekti (kuten kirjautumisessa), muutetaan se JSON-tekstiksi.
     config.body = typeof options.body === 'string' ? options.body : JSON.stringify(options.body);
   }
@@ -103,7 +103,7 @@ const api = {
     // Poista kysymys ID:n perusteella
     deleteQuestion: (questionId) =>
       apiRequest(`/admin/questions/${questionId}`, { method: 'DELETE' }),
-    // LISÄTTY: Päivitä olemassa oleva kysymys ID:n perusteella
+    // Päivitä olemassa oleva kysymys ID:n perusteella
     updateQuestion: (questionId, payload) =>
       apiRequest(`/admin/questions/${questionId}`, { method: 'PUT', body: payload })
   }
