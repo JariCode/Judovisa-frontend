@@ -32,7 +32,7 @@
       <button class="btn-icon danger" id="btn-logout" title="Kirjaudu ulos" type="button">⏻</button>
     </div>
   </header>
-
+  <!--Admin sivun sisältö -->
   <div class="game-layout admin-page-layout">
     <main class="game-main">
       
@@ -56,6 +56,7 @@
               <input type="text" id="admin-search" placeholder="Etsi käyttäjätunnuksella..." autocomplete="off">
             </div>
 
+            <!--Käyttäjätaulukko-->
             <div class="admin-table-wrapper">
               <table class="admin-table">
                 <thead>
@@ -76,6 +77,7 @@
             <div class="auth-message text-center" id="admin-user-message"></div>
           </div>
 
+          <!--Tapahtumaloki-->
           <div class="admin-column">
             <h2 class="admin-box-title">
               <span>Tapahtumaloki</span>
@@ -89,7 +91,100 @@
             </div>
           </div>
 
-        </div> </div> </main>
+        </div> <hr class="admin-separator">
+
+        <!--Uusi visakysymys-->
+        <div class="admin-column">
+          <h2 class="admin-box-title">
+            <span>武道 · Uusi visakysymys</span>
+          </h2>
+          <p class="profile-subtitle text-left">Luo uusi tekstinsyöttökysymys tai monivalinta dojo-tietokantaan</p>
+
+          <form id="form-add-question" class="auth-form active form-gap">
+              <!-- Kysymysten luonti- ja muokkauslomake -->
+            <div class="admin-grid admin-form-grid">
+              <div class="admin-column form-inputs-gap">
+                <div class="field-group">
+                  <label for="q-type">Tekninen tunniste (type) <span class="hint">esim. ashiwaza tai judo_perustaja</span></label>
+                  <input type="text" id="q-type" required placeholder="pienillä kirjaimilla ilman välejä">
+                </div>
+                
+                <div class="field-group">
+                  <label for="q-category">Kategoria <span class="hint">esim. Ashi-Waza tai Historia</span></label>
+                  <input type="text" id="q-category" required placeholder="Kategorian nimi otsikkoon">
+                </div>
+                
+                <div class="field-group">
+                  <label for="q-jpname">Japaninkielinen nimi <span class="hint">valinnainen, esim. 足技</span></label>
+                  <input type="text" id="q-jpname" placeholder="Kanji / Kana -merkit">
+                </div>
+              </div>
+
+              <!-- Kysymysteksti ja kysymyksen tyyppi -->
+              <div class="admin-column form-inputs-gap">
+                <div class="field-group">
+                  <label for="q-text">Kysymysteksti pelaajalle</label>
+                  <input type="text" id="q-text" required placeholder="Mitä visassa kysytään?">
+                </div>
+
+                <div class="field-group">
+                  <label for="q-select-type">Kysymyksen tyyppi</label>
+                  <select id="q-select-type" class="admin-select">
+                    <option value="text">Perinteinen tekstinsyöttö</option>
+                    <option value="choice">Monivalinta (Radio)</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <div class="admin-dashed-line"></div>
+
+            <!-- Dynaaminen osio kysymysten vastausvaihtoehdoille -->
+            <div id="dynamic-text-section" class="dynamic-section">
+              <div class="field-group">
+                <label for="q-attempts">Vaadittujen vastausten / yritysten määrä <span class="hint">esim. 6</span></label>
+                <input type="number" id="q-attempts" min="1" max="12" value="6">
+              </div>
+              <div class="field-group">
+                <label for="q-answers">Hyväksytyt oikeat vastaukset <span class="hint">Erottele vastaukset pilkulla (esim: tomoe nage, sumi gaeshi)</span></label>
+                <input type="text" id="q-answers" required placeholder="vastaus 1, vastaus 2, vastaus 3...">
+              </div>
+            </div>
+
+            <div id="dynamic-choice-section" class="dynamic-section choice-hidden">
+              <div class="admin-box-title choice-title">
+                <span>Syötä vaihtoehdot ja valitse niistä yksi oikea</span>
+              </div>
+
+              <!-- Monivalintavaihtoehdot -->
+              <div class="choices-list">
+                <label class="choice-item">
+                  <input type="radio" name="correct-choice-index" value="0" checked class="choice-radio">
+                  <input type="text" id="opt-0" class="answer-input form-input-sm" placeholder="Vaihtoehto 1">
+                </label>
+                <label class="choice-item">
+                  <input type="radio" name="correct-choice-index" value="1" class="choice-radio">
+                  <input type="text" id="opt-1" class="answer-input form-input-sm" placeholder="Vaihtoehto 2">
+                </label>
+                <label class="choice-item">
+                  <input type="radio" name="correct-choice-index" value="2" class="choice-radio">
+                  <input type="text" id="opt-2" class="answer-input form-input-sm" placeholder="Vaihtoehto 3">
+                </label>
+                <label class="choice-item">
+                  <input type="radio" name="correct-choice-index" value="3" class="choice-radio">
+                  <input type="text" id="opt-3" class="answer-input form-input-sm" placeholder="Vaihtoehto 4">
+                </label>
+              </div>
+            </div>
+
+            <div id="question-form-msg" class="auth-message form-msg-spacing"></div>
+
+            <button type="submit" class="btn-admin-submit">💾 Tallenna Dojo-tietokantaan</button>
+          </form>
+        </div>
+
+      </div> 
+    </main>
   </div>
 
   <script src="js/api.js"></script>

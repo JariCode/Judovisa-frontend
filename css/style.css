@@ -1387,7 +1387,7 @@ body {
 }
 
 /* ============================================================
-   DOJO HALLINTASIVUN (ADMIN) TYYLIT - LOPULLINEN VERSIO
+   DOJO HALLINTASIVUN (ADMIN) TYYLIT 
    ============================================================ */
 
 /* Levennetään asettelua hieman profiilisivusta, jotta kaksi palstaa mahtuu rinnakkain */
@@ -1548,6 +1548,132 @@ body {
   border-radius: 2px;
 }
 
+
+/* ============================================================
+   KYSYMYSTEN LUONTI- JA MUOKKAUSLOMAKE
+   ============================================================ */
+
+/* Visuaalinen erotinlinja vanhan admin-gridin ja uuden lomakkeen välillä */
+.admin-separator {
+  border: 0;
+  border-top: 1px solid rgba(184, 146, 10, 0.15);
+  margin: 40px 0 30px 0;
+}
+
+/* Lomakealueen kahden sarakkeen ruudukko perustiedoille */
+.admin-form-grid {
+  gap: 20px;
+  margin-top: 0;
+}
+
+/* Koko lomakkeen pystysuuntainen pääväli elementtien välillä */
+.form-gap {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Syötekenttien keskinäinen pystysuuntainen väli */
+.form-inputs-gap {
+  gap: 18px;
+}
+
+/* Korjattu hierarkia: pakotetaan uuden osion alaotsikko asettumaan siististi vasemmalle luonnollisesti */
+.admin-column .profile-subtitle {
+  text-align: left;
+}
+
+/* Katkoviiva dynaamisten osioiden yläpuolella */
+.admin-dashed-line {
+  border-top: 1px dashed rgba(184, 146, 10, 0.15);
+  margin: 5px 0;
+}
+
+/* Teksti- ja monivalintaosioiden yhteinen pystyasettelu */
+.dynamic-section {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Piilotetaan se dynaaminen osio, joka ei ole valittuna */
+.choice-hidden {
+  display: none;
+}
+
+/* Monivalintaosion otsikkotyyli */
+.choice-title {
+  font-size: 14px;
+  margin-bottom: 4px;
+  color: var(--gold);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Monivalintavaihtoehtojen tekstikenttien tiivistetty koko */
+.form-input-sm {
+  flex: 1;
+  height: 38px;
+  padding: 6px 12px;
+  font-size: 14px;
+}
+
+/* Poistetaan oletustilan vaatima tyhjä korkeushyppy lomakkeen alareunasta */
+.form-msg-spacing {
+  margin: 0;
+  min-height: auto;
+}
+
+/* Tyylitellään uusi select-valikko täsmäämään muihin input-kenttiin */
+.admin-select {
+  width: 100%;
+  background: rgba(0, 0, 0, 0.25);
+  border: 1px solid rgba(184, 146, 10, 0.25);
+  height: 42px;
+  color: var(--white);
+  cursor: pointer;
+  font-family: var(--font-body);
+  font-size: 14px;
+  border-radius: 12px;
+  padding: 10px 14px;
+  outline: none;
+  transition: var(--transition);
+}
+
+/* Select-valikon aktivointi (Focus) */
+.admin-select:focus {
+  border-color: var(--red);
+  box-shadow: 0 0 0 3px var(--red-glow);
+}
+
+/* Sirompi ja keskitetty tallennuspainike admin-lomakkeelle */
+.btn-admin-submit {
+  align-self: center;             /* Keskittää painikkeen lomakkeen pohjalle */
+  width: auto;                    /* Poistaa täysleveyden */
+  min-width: 240px;               /* Antaa napille jämäkän, mutta siistin pohjan */
+  padding: 12px 28px;             /* Tiiviimmät ja tyylikkäämmät sisäreunukset */
+  margin-top: 10px;
+  background: var(--red);
+  color: var(--white);
+  border: none;
+  border-radius: var(--radius);
+  font-family: var(--font-body);
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.btn-admin-submit:hover {
+  background: var(--red-deep);
+  transform: translateY(-1px);    /* Kevyt dojo-henkinen nosto hoverissa */
+}
+
+.btn-admin-submit:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
 /* ============================================================
    RESPONSIIVISUUS
    ============================================================ */
@@ -1589,7 +1715,7 @@ body {
     font-size: 14px;          /* Pienemmät emojit */
   }
 
-  /* ---- ENNALLAAN OLEVAT PELISIVUN TYYLIT ---- */
+  /* ---- PELISIVUN TYYLIT ---- */
   .game-layout {
     grid-template-columns: 1fr; /* yksi palsta */
   }
@@ -1694,7 +1820,7 @@ body {
     font-size: 0.8rem;
   }
 
-  /* ---- LISÄTTY: YHTENÄISET INPUT-KENTÄT JOKA SIVULLE MOBIILISSA ---- */
+  /* ---- YHTENÄISET INPUT-KENTÄT JOKA SIVULLE MOBIILISSA ---- */
   .field-group input,
   .auth-form input,
   .profile-container input,
@@ -1708,7 +1834,7 @@ body {
     margin: 0;
   }
 
-  /* ---- LISÄTTY: MONIVALINTALAATIKOIDEN TIIVISTYS MOBIILISSA ---- */
+  /* ---- MONIVALINTALAATIKOIDEN TIIVISTYS MOBIILISSA ---- */
   .answer-area .choice-item {
     padding: 10px 14px;      /* Täsmää täysin muiden input-kenttien mobiilipaddingiin */
     font-size: 14px;         /* Yhtenäinen fonttikoko muiden kenttien kanssa */
