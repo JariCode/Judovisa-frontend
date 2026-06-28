@@ -63,12 +63,36 @@ async function fetchDojoLogs() {
       if (['ROLE_CHANGE', 'UPDATE_USERNAME', 'CHANGE_PASSWORD'].includes(action)) type = 'warning'; // keltainen
       if (['DELETE_ACCOUNT', 'ADMIN_DELETE_USER', 'LOGOUT'].includes(action)) type = 'danger'; // punainen
 
-      // Muotoillaan nätti aikaleimi (tuntien, minuuttien ja sekuntien tarkkuudella)
-      const timeStr = new Date(log.timestamp).toLocaleTimeString('fi-FI', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+      // ÄLYKÄS AIKAMUOTOILU: Luodaan pvm-objektit vertailua varten
+      const logDate = new Date(log.timestamp);
+      const today = new Date();
+      
+      let timeStr = '';
+      
+      // Tarkistetaan, onko tapahtuma tänään (sama vuosi, kuukausi ja päivä)
+      if (
+        logDate.getDate() === today.getDate() &&
+        logDate.getMonth() === today.getMonth() &&
+        logDate.getFullYear() === today.getFullYear()
+      ) {
+        // Tänään: näytetään vain pelkkä kelloaika
+        timeStr = logDate.toLocaleTimeString('fi-FI', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+      } else {
+        // Aiemmin: näytetään päivämäärä, VUOSI ja kelloaika
+        const pvm = logDate.toLocaleDateString('fi-FI', { day: 'numeric', month: 'numeric', year: 'numeric' });
+        const klo = logDate.toLocaleTimeString('fi-FI', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+        timeStr = `${pvm} klo ${klo}`;
+      }
       
       const row = document.createElement('span');
       row.className = `log-row ${type}`;
-      row.textContent = `[${timeStr}] [${log.username}] ${log.details}`;
+      
+      // SUOMENNOS LENNOSTA: Korvataan englanninkieliset roolit tekstistä ennen tulostusta
+      let naytettavaDetails = log.details
+        .replace('PLAYER', 'PELAAJA')
+        .replace('ADMIN', 'ADMIN');
+
+      row.textContent = `[${timeStr}] [${log.username}] ${naytettavaDetails}`;
       
       logOutput.appendChild(row);
     });
