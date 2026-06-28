@@ -9,6 +9,11 @@ let allLogs = [];  // Varastoidaan palvelimelta haetut lokit suodatusta varten
 let roleToggleTargetId = null;
 let deleteTargetId = null;
 
+// Kysymysten hallintaa varten (kysymysten haku, suodatus ja poistaminen)
+let allQuestions = []; // Varastoidaan tietokannan kysymykset suodatusta varten
+let questionDeleteTargetId = null; // Kaksivaiheinen varmistus kysymyksen poistolle
+let editingQuestionId = null; // Pitää kirjaa, mitä kysymystä muokataan parhaillaan (null = luodaan uutta)
+
 // ============================================================
 // ALUSTUS JA YLÄPALKKI
 // ============================================================
@@ -33,9 +38,10 @@ async function initAdminPage() {
   roleBadge.textContent = 'Admin';
   roleBadge.className = 'user-badge admin';
 
-  // Ladattujen käyttäjätietojen jälkeen haetaan käyttäjät ja AIKAISEMMAT LOKIT tietokannasta!
+  // Ladattujen käyttäjätietojen jälkeen haetaan käyttäjät, AIKAISEMMAT LOKIT ja KYSYMYKSET tietokannasta!
   await fetchDojoUsers();
   await fetchDojoLogs();
+  await fetchDojoQuestions();
 
   // Otetaan hakukentän kuuntelija käyttöön lennosta (Päivitetty suodattamaan molemmat)
   document.getElementById('admin-search').addEventListener('input', filterDojoData);
@@ -74,8 +80,8 @@ function renderLogTable(logsList) {
       const action = log.action;
 
       if (['LOGIN', 'REGISTER', 'QUESTION_ADD'].includes(action)) type = 'success'; // vihreä (onnistumiset)
-      if (['ROLE_CHANGE', 'UPDATE_USERNAME', 'CHANGE_PASSWORD'].includes(action)) type = 'warning'; // keltainen (muutokset)
-      if (['DELETE_ACCOUNT', 'ADMIN_DELETE_USER', 'LOGOUT'].includes(action)) type = 'danger'; // punainen (poistot/uloskirjautumiset)
+      if (['ROLE_CHANGE', 'UPDATE_USERNAME', 'CHANGE_PASSWORD', 'QUESTION_UPDATE'].includes(action)) type = 'warning'; // keltainen (muutokset)
+      if (['DELETE_ACCOUNT', 'ADMIN_DELETE_USER', 'LOGOUT', 'QUESTION_DELETE'].includes(action)) type = 'danger'; // punainen (poistot/uloskirjautumiset)
 
       // ÄLYKÄS AIKAMUOTOILU: Luodaan pvm-objektit vertailua varten
       const logDate = new Date(log.timestamp);
@@ -188,7 +194,7 @@ function renderUserTable(usersList) {
     tr.appendChild(roleTd);
     tr.appendChild(actionsTd);
     tbody.appendChild(tr);
-    });
+  });
 }
 
 // Yhdistetty suodatusfunktio, joka suodattaa sekuntien murto-osassa molemmat näkymät
@@ -199,16 +205,21 @@ function filterDojoData() {
   const filteredUsers = allUsers.filter(user => user.displayName.toLowerCase().includes(query));
   renderUserTable(filteredUsers);
 
-  // 2. Suodatetaan tapahtumaloki (PÄIVITETTY: etsitään sekä tekijää että kuvauksen tekstiä)
+  // 2. Suodatetaan tapahtumaloki
   const filteredLogs = allLogs.filter(log => {
     const tekijaMatches = log.username.toLowerCase().includes(query);
     const kuvausMatches = log.details.toLowerCase().includes(query);
-    
-    // Rivi otetaan mukaan, jos nimi löytyy joko tekijästä tai selitteestä
     return tekijaMatches || kuvausMatches;
   });
-  
   renderLogTable(filteredLogs);
+
+  // 3. Suodatetaan kysymykset lennosta (etsitään tunnisteesta, kategoriasta tai tekstistä)
+  const filteredQuestions = allQuestions.filter(q => 
+    q.type.toLowerCase().includes(query) || 
+    q.category.toLowerCase().includes(query) || 
+    q.questionText.toLowerCase().includes(query)
+  );
+  renderQuestionTable(filteredQuestions);
 }
 
 // ============================================================
@@ -279,7 +290,6 @@ document.addEventListener('DOMContentLoaded', () => {
         textSection.classList.add('choice-hidden');
         choiceSection.classList.remove('choice-hidden');
 
-        //Vain kaksi ensimmäistä on pakollisia, 3 ja 4 voivat olla tyhjiä!
         opt0.required = true;
         opt1.required = true;
         opt2.required = false;
@@ -300,7 +310,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // ============================================================
-// UUDEN KYSYMYKSEN LÄHETYS BACKENDILLE
+// UUDEN KYSYMYKSEN LÄHETYS TAI PÄIVITYS BACKENDILLE
 // ============================================================
 const formAddQuestion = document.getElementById('form-add-question');
 const formMsg = document.getElementById('question-form-msg');
@@ -309,7 +319,8 @@ if (formAddQuestion) {
   formAddQuestion.addEventListener('submit', async (e) => {
     e.preventDefault();
     
-    formMsg.textContent = 'Tallennetaan kysymystä dojo-tietokantaan...';
+    const submitBtn = formAddQuestion.querySelector('.btn-admin-submit');
+    formMsg.textContent = editingQuestionId ? 'Päivitetään kysymyksen tietoja...' : 'Tallennetaan kysymystä dojo-tietokantaan...';
     formMsg.className = 'auth-message info';
 
     const qType = document.getElementById('q-type').value.trim();
@@ -333,9 +344,8 @@ if (formAddQuestion) {
         .filter(ans => ans.length > 0);
       payload.options = [];
     } else {
-      payload.attempts = 1; // Monivalinnassa aina vain 1 yritys
+      payload.attempts = 1;
       
-      // Kerätään kaikki syötetyt vaihtoehdot
       const rawOptions = [
         document.getElementById('opt-0').value.trim(),
         document.getElementById('opt-1').value.trim(),
@@ -343,15 +353,11 @@ if (formAddQuestion) {
         document.getElementById('opt-3').value.trim()
       ];
       
-      //Suodatetaan tyhjät rivit pois lennosta (sallii 2 tai 3 vaihtoehtoa!)
       const options = rawOptions.filter(opt => opt.length > 0);
       payload.options = options;
 
-      // Katsotaan minkä rivin radiopainike on aktiivinen
       const selectedRadio = document.querySelector('input[name="correct-choice-index"]:checked');
       const correctIndex = parseInt(selectedRadio.value, 10);
-      
-      // Haetaan alkuperäisestä listasta se tekstivaihtoehto, joka valittiin oikeaksi
       const correctText = rawOptions[correctIndex];
       
       if (!correctText) {
@@ -364,21 +370,33 @@ if (formAddQuestion) {
     }
 
     try {
-      // KORJATTU: Käytetään virallista api.js-apuria, joka hoitaa evästeet (cookies) automaattisesti porttiin :5000
-      const result = await api.admin.addQuestion(payload);
+      let result;
+      
+      if (editingQuestionId) {
+        // MUOKKAUSTILA: Päivitetään vanhaa
+        result = await api.admin.updateQuestion(editingQuestionId, payload);
+      } else {
+        // LUONTITILA: Luodaan uutta
+        result = await api.admin.addQuestion(payload);
+      }
 
       if (result.success || result.ok) {
-        formMsg.textContent = '✅ Kysymys tallennettu onnistuneesti dojo-tietokantaan!';
+        formMsg.textContent = editingQuestionId ? '✅ Kysymys päivitetty onnistuneesti!' : '✅ Kysymys tallennettu onnistuneesti dojo-tietokantaan!';
         formMsg.className = 'auth-message success';
+        
+        // Nollataan muokkaustila
+        editingQuestionId = null;
+        if (submitBtn) submitBtn.textContent = '💾 Tallenna Dojo-tietokantaan';
+        
         formAddQuestion.reset();
         
         document.getElementById('dynamic-text-section').classList.remove('choice-hidden');
         document.getElementById('dynamic-choice-section').classList.add('choice-hidden');
         
-        // Päivitetään varmuuden vuoksi myös lokitiedot, jos kanta teki lokimerkinnän
         await fetchDojoLogs();
+        await fetchDojoQuestions();
       } else {
-        formMsg.textContent = `❌ Virhe: ${result.message || 'Tallennus epäonnistui'}`;
+        formMsg.textContent = `❌ Virhe: ${result.message || 'Toiminto epäonnistui'}`;
         formMsg.className = 'auth-message error';
       }
     } catch (error) {
@@ -387,6 +405,187 @@ if (formAddQuestion) {
       formMsg.className = 'auth-message error';
     }
   });
+}
+
+// ============================================================
+// KYSYMYSTEN HAKU, MUOKKAUS JA POISTAMINEN
+// ============================================================
+
+// Haetaan kaikki kysymykset backendistä talteen
+async function fetchDojoQuestions() {
+  const res = await api.admin.getQuestions();
+
+  if (res.success && res.questions) {
+    allQuestions = res.questions;
+    renderQuestionTable(allQuestions);
+  } else {
+    const tbody = document.getElementById('admin-questions-tbody');
+    if (tbody) {
+      tbody.innerHTML = `<tr><td colspan="3" class="table-loading danger">Kysymysten lataus epäonnistui.</td></tr>`;
+    }
+  }
+}
+
+// Piirretään kysymykset siistiin taulukkoon ruudulle
+function renderQuestionTable(questionsList) {
+  const tbody = document.getElementById('admin-questions-tbody');
+  const countBadge = document.getElementById('question-count');
+  
+  if (!tbody) return;
+  
+  tbody.innerHTML = '';
+  countBadge.textContent = questionsList.length;
+
+  if (questionsList.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="3" class="table-loading">Ei löytyneitä kysymyksiä.</td></tr>`;
+    return;
+  }
+
+  questionsList.forEach(q => {
+    const tr = document.createElement('tr');
+
+    // Sarake 1: Tunniste, kategoria ja kanji
+    const infoTd = document.createElement('td');
+    // Poistettu turha margin-left badgesta, koska se menee nyt omalle rivilleen
+    const jpBadge = q.jpName ? `<div style="margin-top:4px;"><span class="user-badge admin">${q.jpName}</span></div>` : '';
+    
+    infoTd.innerHTML = `
+      <strong style="color:var(--gold); font-size:13px;">${q.type}</strong>
+      <div style="font-size:11px; color:var(--muted); margin-top:4px;">
+        Kategoria: <strong>${q.category}</strong>
+      </div>
+      ${jpBadge}
+    `;
+
+    // Sarake 2: Kysymysteksti ja mahdolliset monivalintavaihtoehdot
+    const textTd = document.createElement('td');
+    let optionsHtml = '';
+    
+    if (q.options && q.options.length > 0) {
+      optionsHtml = `<div style="font-size:11px; margin-top:6px; display:flex; gap:8px; flex-wrap:wrap;">`;
+      q.options.forEach(opt => {
+        const isCorrect = q.answers.includes(opt);
+        const style = isCorrect ? 'background:rgba(40,167,69,0.15); color:#28a745; border:1px solid rgba(40,167,69,0.3);' : 'background:rgba(255,255,255,0.05); color:var(--muted);';
+        optionsHtml += `<span style="padding:2px 6px; border-radius:4px; ${style}">${opt}</span>`;
+      });
+      optionsHtml += `</div>`;
+    } else {
+      optionsHtml = `
+        <div style="font-size:11px; color:var(--muted); margin-top:4px;">
+          Sallitut vastaukset: <span style="color:var(--text); font-style:italic;">${q.answers.join(', ')}</span> 
+          (Yritykset: <strong>${q.attempts}</strong>)
+        </div>
+      `;
+    }
+
+    textTd.innerHTML = `<div>${q.questionText}</div>${optionsHtml}`;
+
+    // Sarake 3: Toiminnot (Muokkaa & Poista)
+    const actionsTd = document.createElement('td');
+    actionsTd.className = 'text-right';
+    actionsTd.style.whiteSpace = 'nowrap';
+
+    // Perustetaan Muokkaa-nappi
+    const editBtn = document.createElement('button');
+    editBtn.className = 'admin-btn-sm role-toggle';
+    editBtn.style.marginRight = '5px';
+    editBtn.textContent = 'Muokkaa';
+    editBtn.addEventListener('click', () => startQuestionEdit(q));
+
+    // Perustetaan Poista-nappi kaksivaiheisella varmistuksella
+    const isDeleteVarmistus = questionDeleteTargetId === q._id;
+    const deleteBtn = document.createElement('button');
+    deleteBtn.className = 'admin-btn-sm user-delete';
+    deleteBtn.textContent = isDeleteVarmistus ? '⚠ Vahvista' : 'Poista';
+    deleteBtn.addEventListener('click', () => handleQuestionDelete(q));
+
+    actionsTd.appendChild(editBtn);
+    actionsTd.appendChild(deleteBtn);
+
+    tr.appendChild(infoTd);
+    tr.appendChild(textTd);
+    tr.appendChild(actionsTd);
+    tbody.appendChild(tr);
+  });
+}
+
+// Siirretään valitun kysymyksen tiedot yläpuolella olevaan lomakkeeseen muokattavaksi
+function startQuestionEdit(question) {
+  editingQuestionId = question._id;
+  
+  // Päivitetään tallennusnapin teksti
+  const submitBtn = formAddQuestion.querySelector('.btn-admin-submit');
+  if (submitBtn) submitBtn.textContent = '📝 Päivitä kysymyksen tiedot';
+
+  // Täytetään peruskentät lomakkeelle
+  document.getElementById('q-type').value = question.type;
+  document.getElementById('q-category').value = question.category;
+  document.getElementById('q-jpname').value = question.jpName || '';
+  document.getElementById('q-text').value = question.questionText;
+
+  const selectType = document.getElementById('q-select-type');
+
+  // Katsotaan onko kysymys tekstisyöttö vai monivalinta
+  if (question.options && question.options.length > 0) {
+    selectType.value = 'choice';
+    
+    //Herätetään dynaamisen HTML-lomakkeen vaihtotapahtuma käsin lennosta!
+    // Tämä poistaa required-pakotukset piilotetusta tekstilaatikosta heti.
+    selectType.dispatchEvent(new Event('change'));
+
+    // Täytetään monivalintakentät
+    document.getElementById('opt-0').value = question.options[0] || '';
+    document.getElementById('opt-1').value = question.options[1] || '';
+    document.getElementById('opt-2').value = question.options[2] || '';
+    document.getElementById('opt-3').value = question.options[3] || '';
+
+    // Etsitään mikä vaihtoehdoista on oikea ja ruksataan vastaava radio
+    const correctText = question.answers[0];
+    const correctIndex = question.options.indexOf(correctText);
+    
+    if (correctIndex !== -1) {
+      const radio = document.querySelector(`input[name="correct-choice-index"][value="${correctIndex}"]`);
+      if (radio) radio.checked = true;
+    }
+  } else {
+    // Tavallinen tekstikysymys
+    selectType.value = 'text';
+    
+    // Herätetään dynaamisen HTML-lomakkeen vaihtotapahtuma käsin lennosta!
+    selectType.dispatchEvent(new Event('change'));
+
+    document.getElementById('q-attempts').value = question.attempts || 1;
+    document.getElementById('q-answers').value = question.answers.join(', ');
+  }
+
+  // Skrollataan sivu nätisti ja pehmeästi ylös lomakkeen kohdalle
+  formAddQuestion.scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+// Kysymyksen poiston hallinta (kaksivaiheinen varmistus)
+async function handleQuestionDelete(question) {
+  // Nollataan muut varmistukset suosiolla
+  roleToggleTargetId = null;
+  deleteTargetId = null;
+  document.getElementById('admin-user-message').textContent = '';
+
+  if (questionDeleteTargetId !== question._id) {
+    questionDeleteTargetId = question._id;
+    showAdminMessage(`Haluatko varmasti poistaa kysymyksen "${question.type}"? Klikkaa uudestaan vahvistaaksesi!`, 'error');
+    renderQuestionTable(allQuestions);
+    return;
+  }
+
+  const res = await api.admin.deleteQuestion(question._id);
+  questionDeleteTargetId = null;
+
+  if (res.success) {
+    showAdminMessage(`Kysymys "${question.type}" poistettu pysyvästi kannasta.`, 'success');
+    await fetchDojoQuestions(); // Päivitetään lista
+    await fetchDojoLogs();      // Päivitetään tapahtumaloki
+  } else {
+    showAdminMessage(res.message || 'Kysymyksen poistaminen epäonnistui', 'error');
+  }
 }
 
 // ============================================================

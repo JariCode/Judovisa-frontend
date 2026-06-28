@@ -27,7 +27,7 @@
       <span class="user-badge" id="header-role"></span>
     </div>
     <div class="header-actions">
-      <button class="btn-icon" id="btn-game" title="Peli" type="button">🧠</button>
+      <button class="btn-icon" id="btn-game" title="Peli" type="button">🥋</button>
       <button class="btn-icon" id="btn-profile" title="Profiili" type="button">👤</button>
       <button class="btn-icon danger" id="btn-logout" title="Kirjaudu ulos" type="button">⏻</button>
     </div>
@@ -48,7 +48,7 @@
           
           <div class="admin-column">
             <h2 class="admin-box-title">
-              <span>Käyttäjät</span>
+              <span>門下 · Käyttäjät</span>
               <span id="user-count" class="user-badge player">0</span>
             </h2>
             
@@ -80,7 +80,7 @@
           <!--Tapahtumaloki-->
           <div class="admin-column">
             <h2 class="admin-box-title">
-              <span>Tapahtumaloki</span>
+              <span>記録 · Tapahtumaloki</span>
               <button class="admin-clear-btn" id="btn-clear-logs" type="button">Tyhjennä</button>
             </h2>
 
@@ -96,7 +96,7 @@
         <!--Uusi visakysymys-->
         <div class="admin-column">
           <h2 class="admin-box-title">
-            <span>武道 · Uusi visakysymys</span>
+            <span>題作 · Uusi visakysymys</span>
           </h2>
           <p class="profile-subtitle text-left">Luo uusi tekstinsyöttökysymys tai monivalinta dojo-tietokantaan</p>
 
@@ -181,6 +181,34 @@
 
             <button type="submit" class="btn-admin-submit">💾 Tallenna Dojo-tietokantaan</button>
           </form>
+        </div>
+
+        <hr class="admin-separator">
+
+        <!-- Kysymyspankki -->
+        <div class="admin-card mt-4">
+          <div class="card-header">
+            <h2 class="admin-box-title">
+              <span>問庫 · Kysymyspankki</span>
+              <span id="question-count" class="count-badge">0</span>
+            </h2>
+          </div>
+          <div class="table-wrapper">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>Tunniste / Kategoria</th>
+                  <th>Kysymysteksti & Vaihtoehdot</th>
+                  <th class="text-right">Toiminnot</th>
+                </tr>
+              </thead>
+              <tbody id="admin-questions-tbody">
+                <tr>
+                  <td colspan="3" class="table-loading">Ladataan dojon kysymyspankkia...</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
 
       </div> 

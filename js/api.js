@@ -94,9 +94,18 @@ const api = {
     // Hae kaikki järjestelmälokit kannasta
     getLogs: () =>
       apiRequest('/admin/logs', { method: 'GET' }),
-    // LISÄTTY: Lähetä uusi kysymys backendille suojatusti
+    // Lähetä uusi kysymys backendille suojatusti
     addQuestion: (payload) =>
-      apiRequest('/admin/questions', { method: 'POST', body: payload })
+      apiRequest('/admin/questions', { method: 'POST', body: payload }),
+    // Hae kaikki kysymykset hallintapaneeliin
+    getQuestions: () =>
+      apiRequest('/admin/questions', { method: 'GET' }),
+    // Poista kysymys ID:n perusteella
+    deleteQuestion: (questionId) =>
+      apiRequest(`/admin/questions/${questionId}`, { method: 'DELETE' }),
+    // LISÄTTY: Päivitä olemassa oleva kysymys ID:n perusteella
+    updateQuestion: (questionId, payload) =>
+      apiRequest(`/admin/questions/${questionId}`, { method: 'PUT', body: payload })
   }
 };
 
