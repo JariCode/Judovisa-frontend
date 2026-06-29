@@ -14,6 +14,17 @@ let allQuestions = []; // Varastoidaan tietokannan kysymykset suodatusta varten
 let questionDeleteTargetId = null; // Kaksivaiheinen varmistus kysymyksen poistolle
 let editingQuestionId = null; // Pitää kirjaa, mitä kysymystä muokataan parhaillaan (null = luodaan uutta)
 
+// Suojaa käyttäjän tai kannan teksti XSS:ltä ennen innerHTML-tulostusta
+// Muuttaa HTML-erikoismerkit vaarattomaan muotoon, ettei niitä suoriteta koodina
+function escHtml(str) {
+  return String(str ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
 // ============================================================
 // ALUSTUS JA YLÄPALKKI
 // ============================================================
@@ -383,15 +394,22 @@ if (formAddQuestion) {
       if (result.success || result.ok) {
         formMsg.textContent = editingQuestionId ? '✅ Kysymys päivitetty onnistuneesti!' : '✅ Kysymys tallennettu onnistuneesti dojo-tietokantaan!';
         formMsg.className = 'auth-message success';
+
+        // Tyhjennä onnistumisviesti 4 sekunnin kuluttua
+        setTimeout(() => {
+          formMsg.textContent = '';
+          formMsg.className = 'auth-message';
+        }, 4000);
         
         // Nollataan muokkaustila
         editingQuestionId = null;
         if (submitBtn) submitBtn.textContent = '💾 Tallenna Dojo-tietokantaan';
         
         formAddQuestion.reset();
-        
-        document.getElementById('dynamic-text-section').classList.remove('choice-hidden');
-        document.getElementById('dynamic-choice-section').classList.add('choice-hidden');
+
+        // Resetin jälkeen valikko palaa oletukseen, mutta reset ei laukaise change-tapahtumaa
+        // Laukaistaan se käsin, jolloin olemassa oleva logiikka päivittää required-tilat ja osioiden näkyvyyden oikein
+        document.getElementById('q-select-type').dispatchEvent(new Event('change'));
         
         await fetchDojoLogs();
         await fetchDojoQuestions();
@@ -446,13 +464,13 @@ function renderQuestionTable(questionsList) {
 
     // Sarake 1: Tunniste, kategoria ja kanji
     const infoTd = document.createElement('td');
-    // Poistettu turha margin-left badgesta, koska se menee nyt omalle rivilleen
-    const jpBadge = q.jpName ? `<div style="margin-top:4px;"><span class="user-badge admin">${q.jpName}</span></div>` : '';
+    // Escapetaan kaikki kantakentät XSS:n estämiseksi ennen innerHTML-tulostusta
+    const jpBadge = q.jpName ? `<div style="margin-top:4px;"><span class="user-badge admin">${escHtml(q.jpName)}</span></div>` : '';
     
     infoTd.innerHTML = `
-      <strong style="color:var(--gold); font-size:13px;">${q.type}</strong>
+      <strong style="color:var(--gold); font-size:13px;">${escHtml(q.type)}</strong>
       <div style="font-size:11px; color:var(--muted); margin-top:4px;">
-        Kategoria: <strong>${q.category}</strong>
+        Kategoria: <strong>${escHtml(q.category)}</strong>
       </div>
       ${jpBadge}
     `;
@@ -466,19 +484,23 @@ function renderQuestionTable(questionsList) {
       q.options.forEach(opt => {
         const isCorrect = q.answers.includes(opt);
         const style = isCorrect ? 'background:rgba(40,167,69,0.15); color:#28a745; border:1px solid rgba(40,167,69,0.3);' : 'background:rgba(255,255,255,0.05); color:var(--muted);';
-        optionsHtml += `<span style="padding:2px 6px; border-radius:4px; ${style}">${opt}</span>`;
+        // Escapetaan vaihtoehdon teksti ennen tulostusta
+        optionsHtml += `<span style="padding:2px 6px; border-radius:4px; ${style}">${escHtml(opt)}</span>`;
       });
       optionsHtml += `</div>`;
     } else {
+      // Escapetaan jokainen sallittu vastaus erikseen ennen yhdistämistä
+      const answersText = q.answers.map(a => escHtml(a)).join(', ');
       optionsHtml = `
         <div style="font-size:11px; color:var(--muted); margin-top:4px;">
-          Sallitut vastaukset: <span style="color:var(--text); font-style:italic;">${q.answers.join(', ')}</span> 
-          (Yritykset: <strong>${q.attempts}</strong>)
+          Sallitut vastaukset: <span style="color:var(--text); font-style:italic;">${answersText}</span> 
+          (Yritykset: <strong>${escHtml(q.attempts)}</strong>)
         </div>
       `;
     }
 
-    textTd.innerHTML = `<div>${q.questionText}</div>${optionsHtml}`;
+    // Escapetaan kysymysteksti ennen tulostusta
+    textTd.innerHTML = `<div>${escHtml(q.questionText)}</div>${optionsHtml}`;
 
     // Sarake 3: Toiminnot (Muokkaa & Poista)
     const actionsTd = document.createElement('td');
