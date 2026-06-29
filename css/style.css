@@ -836,12 +836,12 @@ body {
   color: #5aad78;
   border: 1px solid rgba(46,125,70,0.3);
 }
-/* Väärä vastaussiru yliviivattuna */
+/* Väärä vastaussiru punaisena */
 .answer-chip.wrong {
-  background: rgba(255,255,255,0.04);
-  color: var(--muted);
-  border: 1px solid rgba(255,255,255,0.1);
-  text-decoration: line-through;
+  background: rgba(192, 57, 43, 0.10);    /* haalea punainen tausta */
+  color: #e87058;                          /* kirkas punainen tekstiväri */
+  border: 1px solid rgba(192, 57, 43, 0.25); /* punainen reunaviiva */
+  /* text-decoration: line-through;  <- ota tämä pois jos et halua yliviivausta */
 }
 /* Sama vastaussiru */
 .answer-chip.same {

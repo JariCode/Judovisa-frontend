@@ -52,15 +52,18 @@ const api = {
   },
   // Kootut visa-kutsut
   quiz: {
-    // Hae kysymykset (ilman vastauksia)
-    getQuestions: () =>
-      apiRequest('/quiz/questions', { method: 'GET' }),
-    // Tarkista yksittäinen vastaus
-    checkAnswer: (questionId, given) =>
-      apiRequest('/quiz/check', { method: 'POST', body: { questionId, given } }),
-    // Tallenna pelin pisteet
-    saveScore: (correct, wrong, totalQuestions) =>
-      apiRequest('/quiz/score', { method: 'POST', body: { correct, wrong, totalQuestions } }),
+    // Aloita peli: backend arpoo kysymykset ja luo session, palauttaa sessionId + kysymykset
+    startGame: () =>
+      apiRequest('/quiz/start', { method: 'POST' }),
+    // Hae keskeneräisen session tila (sivun päivityksen jälkeen)
+    getSession: (sessionId) =>
+      apiRequest(`/quiz/session/${sessionId}`, { method: 'GET' }),
+    // Tarkista yksittäinen vastaus sessiota vasten
+    checkAnswer: (sessionId, questionId, given) =>
+      apiRequest('/quiz/check', { method: 'POST', body: { sessionId, questionId, given } }),
+    // Tallenna pelin pisteet sessiosta (backend laskee, frontti lähettää vain sessionId)
+    saveScore: (sessionId) =>
+      apiRequest('/quiz/score', { method: 'POST', body: { sessionId } }),
     // Hae Top 10
     getTop10: () =>
       apiRequest('/quiz/top10', { method: 'GET' }),
