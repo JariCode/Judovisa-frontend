@@ -76,6 +76,7 @@ let state = {
   attemptsLeft: 0,        // yrityksiä jäljellä nykyisessä kysymyksessä
   givenAnswers: [],       // tässä kysymyksessä annetut vastaukset { text, type }
   correctGiven: new Set(),// oikeat vastaukset tässä kysymyksessä (normalisoituina)
+  matchedIndexes: new Set(),// mihin vastausryhmiin on jo osuttu (estää synonyymien tuplapisteet)
   sessionScores: [],      // kategoriakohtaiset tulokset
   totalCorrect: 0,        // oikeat yhteensä
   totalWrong: 0,          // väärät yhteensä
@@ -87,7 +88,12 @@ let state = {
 // Tallenna tila istuntoon
 function saveStateToSession() {
   if (state.running) {
-    const stateToSave = { ...state, correctGiven: Array.from(state.correctGiven) };
+    // Set-tyyppiset kentät muunnetaan taulukoiksi, jotta ne voidaan tallentaa JSONiin
+    const stateToSave = {
+      ...state,
+      correctGiven: Array.from(state.correctGiven),
+      matchedIndexes: Array.from(state.matchedIndexes),
+    };
     sessionStorage.setItem('quiz_state', JSON.stringify(stateToSave));
   } else {
     sessionStorage.removeItem('quiz_state');
@@ -103,7 +109,12 @@ function loadStateFromSession() {
       
       // Varmistetaan, että tallennetussa tilassa on kysymyksiä ja peli oli käynnissä
       if (parsed.running && parsed.questions && parsed.questions.length > 0) {
-        state = { ...parsed, correctGiven: new Set(parsed.correctGiven) };
+        // Taulukot muunnetaan takaisin Set-muotoon
+        state = {
+          ...parsed,
+          correctGiven: new Set(parsed.correctGiven),
+          matchedIndexes: new Set(parsed.matchedIndexes || []),
+        };
         state.checking = false; // Varmistetaan ettei jää jumiin lataustilaan
         
         const q = getQ();
@@ -219,6 +230,7 @@ async function startGame() {
       attemptsLeft: 0,
       givenAnswers: [],
       correctGiven: new Set(),
+      matchedIndexes: new Set(),
       sessionScores: [],
       totalCorrect: 0,
       totalWrong: 0,
@@ -254,6 +266,7 @@ function loadQuestion() {
   state.attemptsLeft = q.attempts;
   state.givenAnswers = [];
   state.correctGiven = new Set();
+  state.matchedIndexes = new Set();
   state.checking = false;
   saveStateToSession();
 
@@ -392,7 +405,7 @@ async function checkAnswer() {
   const normalized = normalize(raw);
   const q = getQ();
 
-  // Onko sama vastaus jo annettu tässä kysymyksessä
+  // Onko sama vastaus jo annettu tässä kysymyksessä (täsmälleen sama teksti)
   const alreadyGiven = state.givenAnswers.find((a) => normalize(a.text) === normalized);
   if (alreadyGiven) {
     // Sama vastaus kuluttaa yrityksen
@@ -430,7 +443,32 @@ async function checkAnswer() {
     const isMultipleChoice = q.options && q.options.length > 0;
 
     if (res.correct) {
-      // Oikea vastaus: kuluttaa yrityksen ja antaa pisteen
+      // Tarkista onko tähän vastausryhmään jo osuttu samalla kysymyksellä
+      // res.matchIndex kertoo mihin ryhmään osuma osui (synonyymit ovat samaa ryhmää)
+      // Näin esim. "juji gatame" ja "ude hishigi juji gatame" eivät anna kahta pistettä
+      if (res.matchIndex !== undefined && res.matchIndex !== -1 && state.matchedIndexes.has(res.matchIndex)) {
+        // Sama lukko on jo annettu toisella nimellä - käsitellään kuin duplikaatti
+        state.attemptsLeft--;
+        renderAttemptDots();
+        showFeedback('Olet jo antanut tämän vastauksen', 'same');
+        addAnswerChip(raw, 'same');
+        state.givenAnswers.push({ text: raw, type: 'same' });
+        saveStateToSession();
+        input.value = '';
+        input.classList.add('shake');
+        setTimeout(() => input.classList.remove('shake'), 400);
+        // Jos yritykset loppuivat, siirry seuraavaan
+        if (state.attemptsLeft <= 0) {
+          showFeedback('Olet jo antanut tämän vastauksen, yritykset loppuivat', 'same');
+          setTimeout(() => nextQuestion(false), 1000);
+        }
+        return;
+      }
+
+      // Uusi oikea vastaus: merkitse ryhmä osutuksi, kuluta yritys ja anna piste
+      if (res.matchIndex !== undefined && res.matchIndex !== -1) {
+        state.matchedIndexes.add(res.matchIndex);
+      }
       state.correctGiven.add(normalized);
       state.attemptsLeft--;
       state.totalCorrect++;
