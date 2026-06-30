@@ -370,15 +370,12 @@ function showFeedback(text, type) {
 
 // ---- Lisää vastaus annettujen vastausten listaan ----
 function addAnswerChip(text, type) {
-  //Jos tyyppi on backendin palauttama 'already', muutetaan se lennosta muotoon 'same' CSS-luokkia varten
-  const finalType = type === 'already' ? 'same' : type;
-
   const list = document.getElementById('given-answers');
   document.getElementById('given-title').textContent = 'Annetut vastaukset:';
   const chip = document.createElement('div');
-  chip.className = `answer-chip ${finalType}`; // Käyttää korjattua tyyppinimeä
+  chip.className = `answer-chip ${type}`;
   // Merkki tyypin mukaan
-  const icon = finalType === 'correct' ? '✓' : finalType === 'same' ? '↻' : '✗';
+  const icon = type === 'correct' ? '✓' : type === 'same' ? '↻' : '✗';
   chip.textContent = `${icon} ${text}`;
   list.appendChild(chip);
 }
@@ -448,8 +445,8 @@ async function checkAnswer() {
     } else if (res.result === 'already') {
       // Sama lukko jo annettu (synonyymi tai sama vastaus) - kuluttaa yrityksen, ei pistettä
       state.totalWrong++;
-      addAnswerChip(raw, 'already'); // addAnswerChip kääntää tämän automaattisesti 'same'-muotoon
-      state.givenAnswers.push({ text: raw, type: 'already' });
+      addAnswerChip(raw, 'same');
+      state.givenAnswers.push({ text: raw, type: 'same' });
       input.value = '';
       input.classList.add('shake');
       setTimeout(() => input.classList.remove('shake'), 400);
