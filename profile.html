@@ -60,24 +60,26 @@
         </form>
 
         <form id="form-change-password" class="profile-form" novalidate>
+          <!-- Piilotettu käyttäjätunnuskenttä saavutettavuutta ja salasananhallintaa varten -->
+          <input type="text" autocomplete="username" style="display:none" aria-hidden="true" tabindex="-1">
           <div class="field-group">
             <label for="pw-current">Nykyinen salasana</label>
             <div class="pw-wrap">
-              <input type="password" id="pw-current" placeholder="••••••••">
+              <input type="password" id="pw-current" autocomplete="current-password" placeholder="...">
               <button type="button" class="pw-toggle" onclick="togglePassword('pw-current')" aria-label="Näytä/piilota salasana">👁</button>
             </div>
           </div>
           <div class="field-group">
             <label for="pw-new">Uusi salasana</label>
             <div class="pw-wrap">
-              <input type="password" id="pw-new" placeholder="••••••••">
+              <input type="password" id="pw-new" autocomplete="new-password" placeholder="...">
               <button type="button" class="pw-toggle" onclick="togglePassword('pw-new')" aria-label="Näytä/piilota salasana">👁</button>
             </div>
           </div>
           <div class="field-group">
             <label for="pw-new2">Vahvista uusi salasana</label>
             <div class="pw-wrap">
-              <input type="password" id="pw-new2" placeholder="••••••••">
+              <input type="password" id="pw-new2" autocomplete="new-password" placeholder="...">
               <button type="button" class="pw-toggle" onclick="togglePassword('pw-new2')" aria-label="Näytä/piilota salasana">👁</button>
             </div>
           </div>
@@ -85,7 +87,9 @@
           <button type="submit" class="btn-primary">Vaihda salasana</button>
         </form>
 
-        <div id="form-delete-account" class="profile-form">
+        <form id="form-delete-account" class="profile-form" novalidate>
+          <!-- Piilotettu käyttäjätunnuskenttä saavutettavuutta ja salasananhallintaa varten -->
+          <input type="text" autocomplete="username" style="display:none" aria-hidden="true" tabindex="-1">
           <div class="delete-warning">
             <span class="warning-icon">⚠</span>
             <p>Tilin poistaminen on pysyvää. Kaikki tietosi ja pelituloksesi poistetaan lopullisesti, eikä tätä toimintoa voi peruuttaa.</p>
@@ -93,13 +97,13 @@
           <div class="field-group">
             <label for="delete-confirm-pw">Vahvista salasanalla</label>
             <div class="pw-wrap">
-              <input type="password" id="delete-confirm-pw" placeholder="••••••••">
+              <input type="password" id="delete-confirm-pw" autocomplete="current-password" placeholder="...">
               <button type="button" class="pw-toggle" onclick="togglePassword('delete-confirm-pw')" aria-label="Näytä/piilota salasana">👁</button>
             </div>
           </div>
           <div class="auth-message" id="profile-delete-message"></div>
           <button type="button" class="btn-primary btn-danger-action" id="btn-confirm-delete">Poista tili pysyvästi</button>
-        </div>
+        </form>
       </div>
 
     </main>
