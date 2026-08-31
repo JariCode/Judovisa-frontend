@@ -2068,5 +2068,24 @@ body {
     font-size: 0.75rem;        /* Sama fonttikoko kuin käyttäjälistassa */
     margin: 0;
   }
+
+    /* ---- KIRJAUTUMIS- JA REKISTERÖINTISIVUN MOBIILITYYLIT ---- */
+  .auth-wrap {
+    padding: 14px;              /* Pienempi ulkoreunus kapealla ruudulla */
+  }
+
+  .auth-container {
+    padding: 26px 18px;         /* Tiiviimpi sisäreunus jotta sisältö mahtuu ruudulle */
+  }
+
+  .auth-logo {
+    gap: 10px;                  /* Kanji ja teksti lähemmäs toisiaan */
+    margin-bottom: 24px;
+  }
+
+  .logo-main {
+    font-size: 22px;            /* Pienempi JUDOVISA-teksti jotta se ei leikkaudu reunasta */
+    letter-spacing: 0.04em;
+  }
   
 }
