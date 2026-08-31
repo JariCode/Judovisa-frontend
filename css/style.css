@@ -1675,7 +1675,168 @@ body {
   cursor: not-allowed;
 }
 
+/* ----- Käyttöehdot- ja tietosuojaseloste-linkit ----- */
+.legal-note {
+  margin-top: 1rem;
+  font-size: 0.85rem;
+  color: var(--muted);
+  text-align: center;
+  line-height: 1.5;
+}
 
+.legal-link {
+  background: none;
+  border: none;
+  color: var(--gold);
+  font: inherit;
+  text-decoration: underline;
+  cursor: pointer;
+  padding: 0;
+}
+
+.legal-link:hover {
+  color: var(--red);
+}
+
+/* ----- Käyttöehdot- ja tietosuojaseloste-linkit lomakkeissa ----- */
+.legal-note {
+  margin-top: 1rem;
+  font-size: 0.8rem;
+  color: var(--muted);
+  text-align: center;
+}
+
+.legal-link {
+  background: none;
+  border: none;
+  color: var(--gold);
+  font: inherit;
+  text-decoration: underline;
+  cursor: pointer;
+  padding: 0;
+}
+
+.legal-link:hover {
+  color: var(--red);
+}
+
+/* Päivitetty-päivämäärä modaalin otsikon alla */
+.legal-updated {
+  font-size: 0.8rem;
+  color: var(--muted);
+  margin-top: -0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+/* ----- Modaalit ----- */
+.legal-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.legal-modal[hidden] {
+  display: none;
+}
+
+.legal-modal-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(26, 18, 8, 0.75);
+}
+
+.legal-modal-box {
+  position: relative;
+  background: var(--ink);
+  border: 1px solid var(--red-deep);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  max-width: 640px;
+  width: 100%;
+  max-height: 85vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.legal-modal-close {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  background: none;
+  border: none;
+  color: var(--muted);
+  font-size: 1.4rem;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0.25rem 0.5rem;
+  z-index: 1;
+}
+
+.legal-modal-close:hover {
+  color: var(--red);
+}
+
+.legal-modal-content {
+  overflow-y: auto;
+  padding: 2rem;
+  color: var(--parchment);
+}
+
+.legal-modal-content h2 {
+  font-family: var(--font-display);
+  color: var(--white);
+  margin-top: 0;
+  margin-bottom: 1rem;
+}
+
+.legal-modal-content h3 {
+  color: var(--gold);
+  margin-top: 1.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.legal-modal-content p,
+.legal-modal-content li {
+  line-height: 1.6;
+  color: var(--parchment);
+}
+
+.legal-modal-content ul {
+  padding-left: 1.25rem;
+}
+
+/* ----- Modaalin scrollbar teemaan ----- */
+
+/* Chrome, Edge, Safari */
+.legal-modal-content::-webkit-scrollbar {
+  width: 10px;
+}
+
+.legal-modal-content::-webkit-scrollbar-track {
+  background: rgba(26, 18, 8, 0.4);
+  border-radius: 8px;
+}
+
+.legal-modal-content::-webkit-scrollbar-thumb {
+  background: var(--red-deep);
+  border-radius: 8px;
+  border: 2px solid var(--ink);
+}
+
+.legal-modal-content::-webkit-scrollbar-thumb:hover {
+  background: var(--red);
+}
+
+/* Firefox */
+.legal-modal-content {
+  scrollbar-width: thin;
+  scrollbar-color: var(--red-deep) rgba(26, 18, 8, 0.4);
+}
 
 /* ============================================================
    RESPONSIIVISUUS

@@ -109,3 +109,32 @@ document.getElementById('form-register').addEventListener('submit', async (e) =>
     showMessage('register-message', res.message || 'Rekisteröinti epäonnistui', 'error');
   }
 });
+
+// Käyttöehto- ja tietosuojaseloste-modaalien avaus ja sulku
+(function () {
+  function avaaModaali(nimi) {
+    const modaali = document.getElementById(`modal-${nimi}`);
+    if (modaali) modaali.hidden = false;
+  }
+
+  function suljeModaali(nimi) {
+    const modaali = document.getElementById(`modal-${nimi}`);
+    if (modaali) modaali.hidden = true;
+  }
+
+  document.querySelectorAll('.legal-link').forEach((linkki) => {
+    linkki.addEventListener('click', () => avaaModaali(linkki.dataset.modal));
+  });
+
+  document.querySelectorAll('[data-close]').forEach((el) => {
+    el.addEventListener('click', () => suljeModaali(el.dataset.close));
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      document.querySelectorAll('.legal-modal:not([hidden])').forEach((m) => {
+        m.hidden = true;
+      });
+    }
+  });
+})();
