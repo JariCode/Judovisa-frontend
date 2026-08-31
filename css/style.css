@@ -469,7 +469,7 @@ body {
   display: grid;
   grid-template-columns: 1fr 300px; /* pääsisältö joustaa, sivupalkki kiinteä */
   gap: 24px;
-  padding: 28px 24px;
+  padding: 48px 24px 28px;
   max-width: 1100px;
   margin: 0 auto; /* keskitetään */
   width: 100%;
