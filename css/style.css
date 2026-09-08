@@ -1961,6 +1961,19 @@ body {
     font-size: 0.75rem;
     margin-left: 0.2rem;
   }
+
+  /* Käyttäjälistan "Muuta rooli"- ja "Poista"-napit allekkain mobiilissa,
+     etteivät ne mene limittäin/päällekkäin kapealla toiminnot-sarakkeella */
+  #admin-users-tbody td.text-right {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 6px;
+  }
+
+  #admin-users-tbody .admin-btn-sm {
+    margin-left: 0;
+  }
   .admin-log-wrapper {
     min-height: 200px;
     max-height: 250px;
