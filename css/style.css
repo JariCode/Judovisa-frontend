@@ -1428,7 +1428,14 @@ body {
 
 /* Taulukon kääre ja siisti dojo-skrollaus */
 .admin-table-wrapper {
-  overflow-x: auto;
+  /* Toimintosarakkeen nowrap-napit voivat viedä taulukon rivin
+     muutaman pikselin wrapperia leveämmäksi; overflow-x oli "auto",
+     joten selain piirsi tästä turhan (kultaisen) vaakaskrollipalkin
+     nappien ja varoitustekstin väliin, vaikka mitään ei tarvinnut
+     oikeasti vierittää sivusuunnassa. Pystysuunnan skrollaus (pitkät
+     käyttäjälistat) säilyy, vaakaskrollipalkki vain piilotetaan. */
+  overflow-x: hidden;
+  overflow-y: auto;
   max-height: 280px;
   margin-top: 0.5rem;
   border-radius: 6px;
@@ -1459,6 +1466,14 @@ body {
   font-size: 0.95rem;
   border-bottom: 1px solid rgba(255, 255, 255, 0.05);
   vertical-align: middle;
+}
+
+/* Estetään "Muuta rooli"/"Muokkaa" ja "Poista" -> "⚠ Vahvista" -nappien
+   rivinvaihto toimintosarakkeessa, jotta napit pysyvät samalla rivillä
+   myös kaksivaiheisen varmistuksen aikana (leveämpi "⚠ Vahvista" -teksti
+   ei enää tiputa nappia omalle rivilleen). */
+.admin-table td.text-right {
+  white-space: nowrap;
 }
 
 .table-loading {
