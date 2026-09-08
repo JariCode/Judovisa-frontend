@@ -1520,6 +1520,16 @@ body {
 .admin-btn-sm.user-delete { color: #e87058; border-color: rgba(192, 57, 43, 0.3); }
 .admin-btn-sm.user-delete:hover { background: rgba(192, 57, 43, 0.15); border-color: var(--red); }
 
+/* Oman rivin "Estetty"-teksti: sama laatikkomalli kuin .admin-btn-sm, jotta
+   rivin korkeus ja tekstin pystyasemointi täsmää nappirivien kanssa */
+.admin-action-disabled {
+  display: inline-block;
+  padding: 0.3rem 0.6rem;
+  border: 1px solid transparent;
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
 /* Tyhjennä-painike lokin yläreunassa */
 .admin-clear-btn {
   background: transparent;

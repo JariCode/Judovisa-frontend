@@ -182,7 +182,7 @@ function renderUserTable(usersList) {
     actionsTd.className = 'text-right';
 
     if (currentAdmin && user._id === currentAdmin.id) {
-      actionsTd.innerHTML = '<span style="font-size:12px; color:var(--muted);">Estetty</span>';
+      actionsTd.innerHTML = '<span class="admin-action-disabled">Estetty</span>';
     } else {
       const isRoleVarmistus = roleToggleTargetId === user._id;
       const isDeleteVarmistus = deleteTargetId === user._id;
