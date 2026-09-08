@@ -61,6 +61,9 @@ const api = {
     // Tarkista yksittäinen vastaus sessiota vasten
     checkAnswer: (sessionId, questionId, given) =>
       apiRequest('/quiz/check', { method: 'POST', body: { sessionId, questionId, given } }),
+    // Merkitse kysymys ohitetuksi sessiossa (jotta sivun päivitys ei palauta jo ohitettuun kysymykseen)
+    skip: (sessionId, questionId) =>
+      apiRequest('/quiz/skip', { method: 'POST', body: { sessionId, questionId } }),
     // Tallenna pelin pisteet sessiosta (backend laskee, frontti lähettää vain sessionId)
     saveScore: (sessionId) =>
       apiRequest('/quiz/score', { method: 'POST', body: { sessionId } }),

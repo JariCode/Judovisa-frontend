@@ -324,6 +324,10 @@ function loadQuestion() {
     if (textWrap) textWrap.style.display = 'flex';
     if (choicesWrap) choicesWrap.style.display = 'none';
 
+    // Tyhjennetään edellisen monivalintakysymyksen vaihtoehdot, etteivät ne jää
+    // piilotettuina DOM:iin (mm. sekoittaisi valintanappien laskentaa myöhemmin)
+    if (choicesList) choicesList.innerHTML = '';
+
     // Asetetaanko fokus syötekenttään vain tekstikysymyksessä
     const inputField = document.getElementById('answer-input');
     if (inputField) inputField.focus();
@@ -522,8 +526,18 @@ function nextQuestion(skipped) {
 }
 
 // ---- Ohita kysymys ----
-function skipQuestion() {
+async function skipQuestion() {
   if (!state.running) return;
+
+  // Merkitään kysymys ohitetuksi myös backendin sessioon, jotta sivun päivitys
+  // jatkaa seuraavasta kysymyksestä eikä palaa tähän jo ohitettuun
+  const q = getQ();
+  try {
+    await api.quiz.skip(state.sessionId, q._id);
+  } catch (error) {
+    console.error('Kysymyksen ohitus epäonnistui:', error);
+  }
+
   nextQuestion(true);
 }
 
