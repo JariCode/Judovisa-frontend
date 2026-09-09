@@ -2005,7 +2005,7 @@ body {
     box-sizing: border-box;       /* Pakotetaan selain laskemaan reunukset oikein */
     height: 42px;                  /* Pakotetaan TÄSMÄLLEEN sama korkeus joka sivun kentälle */
     padding: 10px 14px;            /* Yhtenäinen sisäreunustila tekstille */
-    font-size: 14px;               /* Estetään iOS-laitteita zoomaamasta kenttään automaattisesti */
+    font-size: 16px;               /* Estetään iOS-laitteita zoomaamasta kenttään automaattisesti (16px on Safarin kynnysarvo) */
     line-height: 1.2;
     margin: 0;
   }
