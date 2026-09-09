@@ -158,6 +158,14 @@
     </div>
   </div>
 
+  <!-- Latausindikaattori: näkyy kun backend-pyyntö on käynnissä (esim. Render-backendin herätys) -->
+  <div id="loading-overlay" class="loading-overlay" hidden>
+    <div class="loading-box">
+      <div class="loading-spinner"></div>
+      <p id="loading-text">Ladataan...</p>
+    </div>
+  </div>
+
   <!-- Skriptit: ensin api-apuri, sitten lomakelogiikka -->
   <script src="js/api.js"></script>
   <script src="js/auth.js"></script>

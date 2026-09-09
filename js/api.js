@@ -4,6 +4,30 @@
 // Backendin perusosoite paikallisessa kehityksessä
 const API_BASE = 'http://127.0.0.1:5000/api';
 
+// Latausindikaattorin oletusteksti ja "cold start" -viesti
+const LOADING_TEXT_DEFAULT = 'Ladataan...';
+const LOADING_TEXT_SLOW = 'Palvelin herää, tämä voi kestää hetken...';
+let loadingTimeoutId = null;
+
+// Näyttää latausoverlayn ja käynnistää ajastimen hitaan cold startin viestille
+function naytaLataus() {
+  const overlay = document.getElementById('loading-overlay');
+  if (!overlay) return;
+  const text = document.getElementById('loading-text');
+  if (text) text.textContent = LOADING_TEXT_DEFAULT;
+  overlay.hidden = false;
+  loadingTimeoutId = setTimeout(() => {
+    if (text) text.textContent = LOADING_TEXT_SLOW;
+  }, 3000);
+}
+
+// Piilottaa latausoverlayn ja tyhjentää ajastimen
+function piilotaLataus() {
+  const overlay = document.getElementById('loading-overlay');
+  if (overlay) overlay.hidden = true;
+  clearTimeout(loadingTimeoutId);
+}
+
 // Yleinen pyyntöfunktio - hoitaa JSON-otsikot ja evästeet
 async function apiRequest(path, options = {}) {
   // Yhdistä oletusasetukset ja kutsukohtaiset asetukset
@@ -21,6 +45,8 @@ async function apiRequest(path, options = {}) {
   }
 
   try {
+    // Näytä latausindikaattori ennen varsinaista pyyntöä
+    naytaLataus();
     // Tee varsinainen pyyntö
     const res = await fetch(`${API_BASE}${path}`, config);
     // Lue vastaus JSONina
@@ -31,6 +57,9 @@ async function apiRequest(path, options = {}) {
     // Verkkovirhe - backend ei vastaa
     console.error('API-virhe:', error);
     return { ok: false, message: 'Yhteysvirhe palvelimeen' };
+  } finally {
+    // Piilota latausindikaattori aina, myös virhetilanteessa
+    piilotaLataus();
   }
 }
 

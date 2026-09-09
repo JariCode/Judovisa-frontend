@@ -2099,5 +2099,61 @@ body {
     font-size: 22px;            /* Pienempi JUDOVISA-teksti jotta se ei leikkaudu reunasta */
     letter-spacing: 0.04em;
   }
-  
+
+}
+
+/* ============================================================
+   LATAUSINDIKAATTORI (backend-pyyntö käynnissä)
+   ============================================================ */
+
+/* Koko ruudun peittävä overlay pyynnön ajaksi */
+.loading-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(26, 18, 8, 0.75); /* tumma läpikuultava tausta */
+}
+
+/* Piilotus hidden-attribuutilla, ei display:nonea inline-tyylinä */
+.loading-overlay[hidden] {
+  display: none;
+}
+
+/* Keskitetty laatikko teeman väreillä */
+.loading-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  background: var(--ink);
+  border: 1px solid var(--red-deep);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  padding: 32px 40px;
+  max-width: 320px;
+  text-align: center;
+}
+
+/* Pyörivä spinner */
+.loading-spinner {
+  width: 42px;
+  height: 42px;
+  border: 4px solid rgba(184, 146, 10, 0.2);
+  border-top-color: var(--gold);
+  border-radius: 50%;
+  animation: loadingSpin 0.8s linear infinite;
+}
+
+@keyframes loadingSpin {
+  to { transform: rotate(360deg); }
+}
+
+/* Latausteksti */
+#loading-text {
+  font-family: var(--font-body);
+  font-size: 14px;
+  color: var(--parchment);
 }
