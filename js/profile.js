@@ -17,7 +17,7 @@ async function initProfile() {
 
   // Jos ei kirjautunut, ohjaa etusivulle
   if (!res.ok || !res.success) {
-    window.location.href = 'index.html';
+    window.location.href = './';
     return;
   }
 
@@ -218,7 +218,7 @@ document.getElementById('btn-confirm-delete').addEventListener('click', async ()
     sessionStorage.removeItem('quiz_state');
     
     setTimeout(() => {
-      window.location.href = 'index.html';
+      window.location.href = './';
     }, 1500);
   } else {
     showProfileMessage('profile-delete-message', res.message || 'Tilin poisto epäonnistui', 'error');
@@ -245,7 +245,7 @@ document.getElementById('btn-admin').addEventListener('click', () => {
 document.getElementById('btn-logout').addEventListener('click', async () => {
   sessionStorage.removeItem('quiz_state');
   await api.auth.logout();
-  window.location.href = 'index.html';
+  window.location.href = './';
 });
 
 // ============================================================

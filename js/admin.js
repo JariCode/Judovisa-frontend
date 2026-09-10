@@ -33,7 +33,7 @@ async function initAdminPage() {
   const res = await api.auth.me();
 
   if (!res.ok || !res.success) {
-    window.location.href = 'index.html';
+    window.location.href = './';
     return;
   }
 
@@ -625,7 +625,7 @@ document.getElementById('btn-profile').addEventListener('click', () => {
 document.getElementById('btn-logout').addEventListener('click', async () => {
   sessionStorage.removeItem('quiz_state');
   await api.auth.logout();
-  window.location.href = 'index.html';
+  window.location.href = './';
 });
 
 document.getElementById('btn-clear-logs').addEventListener('click', () => {

@@ -18,7 +18,7 @@ async function initUser() {
   // Jos ei kirjautunut, ohjaa etusivulle
   if (!res.ok || !res.success) {
     sessionStorage.removeItem('quiz_sid');
-    window.location.href = 'index.html';
+    window.location.href = './';
     return;
   }
 
@@ -53,7 +53,7 @@ document.getElementById('btn-logout').addEventListener('click', async () => {
   // Kutsu backendin logout-reittiä joka poistaa evästeen
   await api.auth.logout();
   // Ohjaa takaisin etusivulle
-  window.location.href = 'index.html';
+  window.location.href = './';
 });
 
 // ---- Profiilipainike: siirry profiilisivulle ----
