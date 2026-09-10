@@ -7,7 +7,7 @@ const API_BASE = 'http://127.0.0.1:5000/api';
 // Latausindikaattorin oletusteksti ja "cold start" -viesti
 const LOADING_TEXT_DEFAULT = 'Ladataan...';
 const LOADING_TEXT_SLOW = 'Palvelin herää, tämä voi kestää hetken...';
-const LOADING_SHOW_DELAY = 400; // ms - nopeat pyynnöt eivät ehdi näyttää overlayta
+const LOADING_SHOW_DELAY = 800; // ms - nopeat pyynnöt eivät ehdi näyttää overlayta
 let loadingShowTimeoutId = null;
 let loadingSlowTimeoutId = null;
 let activeRequests = 0; // pyyntölaskuri: montako apiRequestia on kesken samanaikaisesti
