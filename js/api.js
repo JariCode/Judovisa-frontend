@@ -7,25 +7,44 @@ const API_BASE = 'http://127.0.0.1:5000/api';
 // Latausindikaattorin oletusteksti ja "cold start" -viesti
 const LOADING_TEXT_DEFAULT = 'Ladataan...';
 const LOADING_TEXT_SLOW = 'Palvelin herää, tämä voi kestää hetken...';
-let loadingTimeoutId = null;
+const LOADING_SHOW_DELAY = 400; // ms - nopeat pyynnöt eivät ehdi näyttää overlayta
+let loadingShowTimeoutId = null;
+let loadingSlowTimeoutId = null;
+let activeRequests = 0; // pyyntölaskuri: montako apiRequestia on kesken samanaikaisesti
 
-// Näyttää latausoverlayn ja käynnistää ajastimen hitaan cold startin viestille
+// Käynnistää ajastimet vain kun ensimmäinen samanaikainen pyyntö alkaa:
+// overlay näytetään vasta 400ms kuluttua, ja teksti vaihtuu "hidas" -viestiin
+// 3s kuluttua pyyntöryppään alusta
 function naytaLataus() {
+  activeRequests++;
+  if (activeRequests > 1) return; // ajastimet käynnissä jo toiselle pyynnölle
+
   const overlay = document.getElementById('loading-overlay');
   if (!overlay) return;
   const text = document.getElementById('loading-text');
-  if (text) text.textContent = LOADING_TEXT_DEFAULT;
-  overlay.hidden = false;
-  loadingTimeoutId = setTimeout(() => {
+
+  loadingShowTimeoutId = setTimeout(() => {
+    if (text) text.textContent = LOADING_TEXT_DEFAULT;
+    overlay.hidden = false;
+  }, LOADING_SHOW_DELAY);
+
+  loadingSlowTimeoutId = setTimeout(() => {
     if (text) text.textContent = LOADING_TEXT_SLOW;
   }, 3000);
 }
 
-// Piilottaa latausoverlayn ja tyhjentää ajastimen
+// Piilottaa latausoverlayn ja tyhjentää ajastimet vasta kun kaikki
+// samanaikaiset pyynnöt ovat valmistuneet (laskuri palaa nollaan)
 function piilotaLataus() {
+  activeRequests = Math.max(0, activeRequests - 1);
+  if (activeRequests > 0) return; // muita pyyntöjä yhä kesken
+
   const overlay = document.getElementById('loading-overlay');
+  clearTimeout(loadingShowTimeoutId);
+  clearTimeout(loadingSlowTimeoutId);
+  loadingShowTimeoutId = null;
+  loadingSlowTimeoutId = null;
   if (overlay) overlay.hidden = true;
-  clearTimeout(loadingTimeoutId);
 }
 
 // Yleinen pyyntöfunktio - hoitaa JSON-otsikot ja evästeet
