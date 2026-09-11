@@ -4,6 +4,79 @@
    Fontit: Shippori Mincho (otsikot), Zen Kaku (leipä), Noto Sans JP (japani)
    ============================================================ */
 
+/* ---- Paikalliset fontit (ei enää Google Fonts -latausta, GDPR) ---- */
+@font-face {
+  font-family: 'Shippori Mincho';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('../fonts/shippori-mincho-v17-japanese_latin-regular.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Shippori Mincho';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('../fonts/shippori-mincho-v17-japanese_latin-600.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Shippori Mincho';
+  font-style: normal;
+  font-weight: 800;
+  font-display: swap;
+  src: url('../fonts/shippori-mincho-v17-japanese_latin-800.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Zen Kaku Gothic New';
+  font-style: normal;
+  font-weight: 300;
+  font-display: swap;
+  src: url('../fonts/zen-kaku-gothic-new-v18-japanese_latin-300.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Zen Kaku Gothic New';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('../fonts/zen-kaku-gothic-new-v18-japanese_latin-regular.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Zen Kaku Gothic New';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('../fonts/zen-kaku-gothic-new-v18-japanese_latin-700.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Noto Sans JP';
+  font-style: normal;
+  font-weight: 300;
+  font-display: swap;
+  src: url('../fonts/noto-sans-jp-v56-japanese_latin-300.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Noto Sans JP';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('../fonts/noto-sans-jp-v56-japanese_latin-regular.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Noto Sans JP';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url('../fonts/noto-sans-jp-v56-japanese_latin-500.woff2') format('woff2');
+}
+
 /* ---- CSS-muuttujat: värit, fontit, varjot ---- */
 :root {
   /* Värit */
