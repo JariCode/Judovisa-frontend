@@ -1,0 +1,13 @@
+Fontit tässä kansiossa:
+- Shippori Mincho
+- Noto Sans JP
+- Zen Kaku Gothic New
+
+Lisenssi: SIL Open Font License, Version 1.1 (OFL-1.1)
+Lähde: Google Fonts (https://fonts.google.com)
+Lisenssin täysi teksti: https://openfontlicense.org
+
+Fontteja käytetään sovelluksen omalta palvelimelta (self-hosted)
+tietosuojasyistä, jotta käyttäjän IP-osoitetta ei välitetä
+kolmansille osapuolille. OFL-lisenssi sallii fonttien käytön
+verkkosivulla ja liittämisen osaksi sovellusta.
