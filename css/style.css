@@ -1936,7 +1936,7 @@ body {
 
   #header-username {
     font-size: 13px;          /* Tiivistetään käyttäjän nimen kokoa */
-    max-width: 80px;          /* Rajataan pituus, jos on pitkä nimi */
+    max-width: 60px;          /* Rajataan pituus, jos on pitkä nimi */
     overflow: hidden;
     text-overflow: ellipsis;  /* Lisää kolme pistettä, jos nimi on jättipitkä */
     white-space: nowrap;
